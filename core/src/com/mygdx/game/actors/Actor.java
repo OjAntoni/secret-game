@@ -17,17 +17,25 @@ public abstract class Actor {
     @Getter
     protected Rectangle rectangle;
     protected Collection<GameObject> gameObjects;
+    @Getter
+    protected float pace;
 
-    abstract public Coordinates getCoordinates();
-    abstract public void setCoordinates(Coordinates coordinates);
+    public Coordinates getCoordinates(){
+        return new Coordinates(rectangle.x, rectangle.y);
+    }
+    public void setCoordinates(Coordinates coordinates){
+        rectangle.x = coordinates.x;
+        rectangle.y = coordinates.y;
+    }
     abstract public long getTimeLived();
     abstract public void stop(int secondsDelay);
     abstract public boolean canBeMoved();
     public Coordinates calculateNewCoordinates(){
         return new Coordinates(rectangle.x, rectangle.y);
     }
-
-    public void setInitialPace(double pace){}
+    public void setInitialPace(float pace){
+        this.pace = pace;
+    }
     public void dispose(){}
     public void draw(SpriteBatch batch){
         texture.dispose();
@@ -42,4 +50,10 @@ public abstract class Actor {
     }
 
     public void resetLivedTime(){timeAlive=0;}
+    public boolean shouldBeDeletedFromGame(){
+        return false;
+    }
+    public void deleteFromGame(){}
+    public void pause(){}
+    public void resume(){}
 }

@@ -22,13 +22,14 @@ public class Zawadski extends Actor {
         HORIZONTAL
     }
 
-    private boolean isInGame = false;
+    private boolean isInGameScreen = false;
     private Axis axis;
     private int movementCoefficient;
     private final Random r = new Random();
     private static final List<Axis> values = Collections.unmodifiableList(Arrays.asList(Axis.values()));
     private ObjectRegistry objectRegistry;
     private Direction directionForObjects;
+    private boolean isPaused;
 
 
     public Zawadski() {
@@ -37,18 +38,20 @@ public class Zawadski extends Actor {
         objectRegistry = ObjectRegistry.getInstance();
         rectangle.setHeight(texture.getHeight() / 6f);
         rectangle.setWidth(texture.getWidth() / 6f);
+        isPaused = true;
+
         Timer.Task scheduleForAppearance = Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 setInitialPosition();
-                isInGame = true;
+                isInGameScreen = true;
             }
         }, 0f, 10);
 
         Timer.Task scheduleForThrowingObjects = Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                if (isInGame)
+                if (isInGameScreen && !isPaused)
                     placeObject(new Niezaliczone(new Coordinates(rectangle.x, rectangle.y), directionForObjects));
             }
         }, 0, 1);
@@ -56,7 +59,7 @@ public class Zawadski extends Actor {
 
     @Override
     public Coordinates calculateNewCoordinates() {
-        if (isInGame) {
+        if (isInGameScreen) {
             switch (axis) {
                 case VERTICAL:
                     rectangle.y += movementCoefficient * 2;
@@ -66,10 +69,10 @@ public class Zawadski extends Actor {
                     break;
             }
             if (rectangle.x - rectangle.width > Properties.SCREEN_WIDTH || rectangle.x < 0) {
-                isInGame = false;
+                isInGameScreen = false;
             }
             if (rectangle.y > Properties.SCREEN_HEIGHT || rectangle.y + rectangle.height < 0) {
-                isInGame = false;
+                isInGameScreen = false;
             }
         }
         return new Coordinates(rectangle.x, rectangle.y);
@@ -111,7 +114,7 @@ public class Zawadski extends Actor {
 
     @Override
     public void draw(SpriteBatch batch) {
-        if (isInGame)
+        if (isInGameScreen)
             batch.draw(texture, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
 
@@ -139,5 +142,20 @@ public class Zawadski extends Actor {
     @Override
     public boolean canBeMoved() {
         return true;
+    }
+
+    @Override
+    public boolean shouldBeDeletedFromGame() {
+        return super.shouldBeDeletedFromGame();
+    }
+
+    @Override
+    public void pause() {
+        isPaused = true;
+    }
+
+    @Override
+    public void resume() {
+        isPaused = false;
     }
 }

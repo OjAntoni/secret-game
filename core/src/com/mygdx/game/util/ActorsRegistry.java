@@ -1,6 +1,7 @@
 package com.mygdx.game.util;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.actors.*;
 import com.mygdx.game.game.GameLevel;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class ActorsRegistry {
     @Getter
     @Setter
     private HashMap<String, Actor> currentInGameActors = new HashMap<>();
+    private int level;
 
     {
         Student student = new Student();
@@ -27,17 +29,49 @@ public class ActorsRegistry {
         allActors.put("jstar", jstar);
         allActors.put("student", student);
         allActors.put("zawadski", new Zawadski());
+        Wilk wilk = new Wilk();
+        wilk.setActor(jstar);
+        allActors.put("wilk", wilk);
+
+        allActors.values().forEach(Actor::pause);
     }
 
-    public void updateInGameActors(GameLevel level) {
-        for (Map.Entry<String, Actor> e : allActors.entrySet()) {
-            if(!e.getKey().equals("student"))
-                e.getValue().resetLivedTime();
-        }
+    {
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                level++;
+                updateInGameActors(GameLevel.getLevel(level));
+            }
+        }, 0f, 60f);
+    }
+
+    {
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                deleteDeadActors();
+            }
+        }, 0f, 0.5f);
+    }
+
+    private void deleteDeadActors() {
+        List<String> actorsToDelete = new ArrayList<>();
+        currentInGameActors.forEach((name, a) -> {
+            if(a.shouldBeDeletedFromGame()){
+                actorsToDelete.add(name);
+            }
+        });
+        actorsToDelete.forEach(name -> currentInGameActors.remove(name));
+    }
+
+    private void updateInGameActors(GameLevel level) {
+        currentInGameActors.values().forEach(Actor::pause);
         currentInGameActors = new HashMap<>();
         currentInGameActors.put("student", allActors.get("student"));
         for (String s : level.getActorNamesInGame()) {
             currentInGameActors.put(s, allActors.get(s));
+            allActors.get(s).resume();
         }
     }
 

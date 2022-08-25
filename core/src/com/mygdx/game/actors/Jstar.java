@@ -7,11 +7,12 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.util.Properties;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Jstar extends Actor implements ActorAware{
     private Actor studentToSneak;
     private int leftTimeToBeStopped;
-    private final double pace = 0.01;
     private final Texture normalJstar;
     private final Texture stoppedJstar;
 
@@ -32,17 +33,6 @@ public class Jstar extends Actor implements ActorAware{
                 }
             }
         }, 1f, 1f);
-    }
-
-    @Override
-    public Coordinates getCoordinates() {
-        return new Coordinates(rectangle.x, rectangle.y);
-    }
-
-    @Override
-    public void setCoordinates(Coordinates coordinates) {
-        rectangle.x = coordinates.x;
-        rectangle.y = coordinates.y;
     }
 
     @Override
@@ -68,17 +58,22 @@ public class Jstar extends Actor implements ActorAware{
     }
 
     @Override
-    public void setActor(Actor student) {
-        this.studentToSneak = student;
+    public void setActor(Actor actor) {
+        this.studentToSneak = actor;
     }
 
     @Override
     public Coordinates calculateNewCoordinates() {
         if(canBeMoved()){
-            rectangle.y = (float) (rectangle.y + ((studentToSneak.rectangle.y - rectangle.y)/Math.abs(studentToSneak.rectangle.y - rectangle.y))*10*(pace+timeAlive*0.01));
-            rectangle.x = (float) (rectangle.x + ((studentToSneak.rectangle.x - rectangle.x)/Math.abs(studentToSneak.rectangle.x - rectangle.x))*10*(pace+timeAlive*0.01));
+            rectangle.y = (float) (rectangle.y + ((studentToSneak.rectangle.y - rectangle.y)/Math.abs(studentToSneak.rectangle.y - rectangle.y))*pace/10);
+            rectangle.x = (float) (rectangle.x + ((studentToSneak.rectangle.x - rectangle.x)/Math.abs(studentToSneak.rectangle.x - rectangle.x))*pace/10);
         }
+        incrementPace();
         return new Coordinates(rectangle.x, rectangle.y);
+    }
+
+    private void incrementPace() {
+        pace += 0.006;
     }
 
     @Override
@@ -86,4 +81,10 @@ public class Jstar extends Actor implements ActorAware{
         batch.draw(texture, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
 
+    @Override
+    public void setInitialPace(float pace) {
+        if (pace>0) {
+            super.pace = pace;
+        }
+    }
 }

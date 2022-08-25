@@ -34,12 +34,12 @@ public class GameScreen implements Screen {
         this.game = game;
         this.objectRegistry = ObjectRegistry.getInstance();
         this.actorsRegistry = new ActorsRegistry();
-        actorsRegistry.updateInGameActors(GameLevel.ONE);
+//        actorsRegistry.updateInGameActors(GameLevel.ONE);
         loadMusic();
         configMusic();
         configCamera();
         startSecondsTimer();
-        startLevelTimer();
+//        startLevelTimer();
     }
 
     private void configCamera() {
@@ -85,12 +85,8 @@ public class GameScreen implements Screen {
             student.setCoordinates(new Coordinates(touchPos.x, touchPos.y));
         }
 
-        for (Book book : objectRegistry.getAll(Book.class)) {
-            Actor jstar = actorsRegistry.get("jstar");
-            if (jstar.getRectangle().contains(book.getRectangle())) {
-                jstar.stop(5);
-            }
-        }
+        checkIfJstarCollapsesWithCleanCode();
+        checkIfWilkCollapsesWithNiezaliczone();
 
         if (studentLoosedTheGame()) {
             looseSound.play();
@@ -103,9 +99,29 @@ public class GameScreen implements Screen {
             }
         }
 
-
         actorsRegistry.updatePositions();
         objectRegistry.updatePositions();
+    }
+
+    private void checkIfWilkCollapsesWithNiezaliczone() {
+        Actor wilk = actorsRegistry.get("wilk");
+        if(wilk!=null){
+            for (Niezaliczone nzal : objectRegistry.getAll(Niezaliczone.class)) {
+                if(wilk.getRectangle().contains(nzal.getRectangle())){
+                    wilk.deleteFromGame();
+                }
+            }
+        }
+    }
+
+    private void checkIfJstarCollapsesWithCleanCode() {
+        for (Book book : objectRegistry.getAll(Book.class)) {
+            Actor jstar = actorsRegistry.get("jstar");
+            if (jstar.getRectangle().contains(book.getRectangle())) {
+                jstar.stop(5);
+                jstar.setInitialPace(jstar.getPace()*0.8f);
+            }
+        }
     }
 
     private boolean studentLoosedTheGame() {
@@ -149,17 +165,17 @@ public class GameScreen implements Screen {
         }, 1f, 1f);
     }
 
-    public void startLevelTimer() {
-        Timer.schedule(new Timer.Task() {
-            int level = 1;
-
-            @Override
-            public void run() {
-                actorsRegistry.updateInGameActors(GameLevel.getLevel(level));
-                level++;
-            }
-        }, 0f, 60f);
-    }
+//    public void startLevelTimer() {
+//        Timer.schedule(new Timer.Task() {
+//            int level = 1;
+//
+//            @Override
+//            public void run() {
+//                actorsRegistry.updateInGameActors(GameLevel.getLevel(level));
+//                level++;
+//            }
+//        }, 0f, 60f);
+//    }
 
     @Override
     public void resize(int width, int height) {

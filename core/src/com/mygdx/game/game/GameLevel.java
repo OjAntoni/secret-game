@@ -5,8 +5,8 @@ import lombok.Getter;
 import java.util.List;
 
 public enum GameLevel {
-    ONE(List.of("jstar", "zawadski")),
-    TWO(List.of("jstar", "zawadski")),
+    ONE(List.of("jstar", "wilk", "zawadski")),
+    TWO(List.of("jstar", "wilk")),
     THREE(List.of("jstar", "zawadski", "ato")),
     FOUR(List.of("jstar", "zawadski", "ato", "misiuk"));
 
