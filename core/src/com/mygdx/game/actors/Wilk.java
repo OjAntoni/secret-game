@@ -28,7 +28,7 @@ public class Wilk extends Actor implements ActorAware {
         registry = ObjectRegistry.getInstance();
         isAlive = true;
         canBeMoved = true;
-        pace = 0.4f;
+        pace = 0.2f;
     }
 
     @Override

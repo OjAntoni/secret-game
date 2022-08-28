@@ -19,7 +19,9 @@ public abstract class GameObject {
 
     public void draw(SpriteBatch batch){}
 
+    public void setAsDeleted(){}
     public void dispose(){
+        texture.dispose();
     }
 
     public void setCoordinates(Coordinates coordinates){

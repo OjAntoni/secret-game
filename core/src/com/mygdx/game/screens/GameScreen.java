@@ -10,15 +10,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
+import com.mygdx.game.actors.Ato;
 import com.mygdx.game.game.GameLevel;
 import com.mygdx.game.game.PWGame;
+import com.mygdx.game.objects.LinuxPenguin;
 import com.mygdx.game.objects.Niezaliczone;
 import com.mygdx.game.util.ActorsRegistry;
+import com.mygdx.game.util.Direction;
 import com.mygdx.game.util.ObjectRegistry;
 import com.mygdx.game.util.Properties;
 import com.mygdx.game.actors.Actor;
 import com.mygdx.game.actors.Coordinates;
 import com.mygdx.game.objects.Book;
+
+import java.util.List;
+import java.util.function.Function;
 
 
 public class GameScreen implements Screen {
@@ -64,11 +70,24 @@ public class GameScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
+        game.renderer.setAutoShapeType(true);
+        game.renderer.begin();
+        actorsRegistry.drawAll(game.renderer);
+        game.renderer.end();
+
         game.batch.begin();
         drawMenu();
         drawObjects();
         drawActors();
         game.batch.end();
+
+        Actor student = actorsRegistry.get("student");
+        if (Gdx.input.isTouched()) {
+            Vector3 touchPos = new Vector3();
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            student.setCoordinates(new Coordinates(touchPos.x, touchPos.y));
+        }
 
         if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Vector3 touchPos = new Vector3();
@@ -77,16 +96,10 @@ public class GameScreen implements Screen {
             Book book = new Book(new Coordinates(touchPos.x, touchPos.y), timeSurvived);
             objectRegistry.add(book);
         }
-        if (Gdx.input.isTouched()) {
-            Vector3 touchPos = new Vector3();
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            Actor student = actorsRegistry.get("student");
-            student.setCoordinates(new Coordinates(touchPos.x, touchPos.y));
-        }
 
         checkIfJstarCollapsesWithCleanCode();
         checkIfWilkCollapsesWithNiezaliczone();
+        checkIfStudentCollapsesWithLinux();
 
         if (studentLoosedTheGame()) {
             looseSound.play();
@@ -103,11 +116,25 @@ public class GameScreen implements Screen {
         objectRegistry.updatePositions();
     }
 
+    private void checkIfStudentCollapsesWithLinux() {
+        Actor student = actorsRegistry.get("student");
+        List<LinuxPenguin> linuxes = objectRegistry.getAll(LinuxPenguin.class);
+        linuxes.forEach(l -> {
+            if (student.getRectangle().contains(l.getRectangle())) {
+                l.setAsDeleted();
+                if (student.canBeMoved()) {
+                    student.stop(3);
+                }
+            }
+        });
+    }
+
+
     private void checkIfWilkCollapsesWithNiezaliczone() {
         Actor wilk = actorsRegistry.get("wilk");
-        if(wilk!=null){
+        if (wilk != null) {
             for (Niezaliczone nzal : objectRegistry.getAll(Niezaliczone.class)) {
-                if(wilk.getRectangle().contains(nzal.getRectangle())){
+                if (wilk.getRectangle().contains(nzal.getRectangle())) {
                     wilk.deleteFromGame();
                 }
             }
@@ -115,28 +142,47 @@ public class GameScreen implements Screen {
     }
 
     private void checkIfJstarCollapsesWithCleanCode() {
+        if (actorsRegistry.get("jstar") == null) {
+            return;
+        }
         for (Book book : objectRegistry.getAll(Book.class)) {
             Actor jstar = actorsRegistry.get("jstar");
             if (jstar.getRectangle().contains(book.getRectangle())) {
                 jstar.stop(5);
-                jstar.setInitialPace(jstar.getPace()*0.8f);
+                jstar.setInitialPace(jstar.getPace() * 0.8f);
             }
         }
     }
 
     private boolean studentLoosedTheGame() {
         Actor student = actorsRegistry.get("student");
-        return isStudentEatenByJstar(student) || isStudentCatchedNzal(student);
+        return isStudentEatenByJstar(student) || isStudentCatchedNzal(student) || isStudentDeadByLaser(student);
+    }
+
+    private boolean isStudentDeadByLaser(Actor student) {
+        Ato ato = (Ato) actorsRegistry.get("ato");
+        if (ato != null) {
+            Function<Float, Float> lineFunction = ato.getLineFunction();
+            Float yOfLaserIntersection = lineFunction.apply(student.getRectangle().x);
+            boolean caughtByLaser = yOfLaserIntersection > student.getRectangle().y && yOfLaserIntersection < student.getRectangle().y + student.getRectangle().height;
+            return caughtByLaser
+                    && student.getRectangle().x > ato.getX0()
+                    && ato.isLaserActive();
+        }
+        return false;
     }
 
     private boolean isStudentCatchedNzal(Actor student) {
         return objectRegistry.getAll(Niezaliczone.class)
                 .stream()
                 .anyMatch(nzal -> student.getRectangle()
-                .contains(nzal.getRectangle()));
+                        .contains(nzal.getRectangle()));
     }
 
     private boolean isStudentEatenByJstar(Actor student) {
+        if (actorsRegistry.get("jstar") == null) {
+            return false;
+        }
         return actorsRegistry.get("jstar").getRectangle().contains(student.getRectangle());
     }
 
@@ -153,6 +199,7 @@ public class GameScreen implements Screen {
 
     private void drawActors() {
         actorsRegistry.drawAll(game.batch);
+
     }
 
     public void startSecondsTimer() {

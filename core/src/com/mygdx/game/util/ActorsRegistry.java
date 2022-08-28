@@ -1,6 +1,7 @@
 package com.mygdx.game.util;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.actors.*;
 import com.mygdx.game.game.GameLevel;
@@ -33,6 +34,8 @@ public class ActorsRegistry {
         wilk.setActor(jstar);
         allActors.put("wilk", wilk);
 
+        allActors.put("ato", new Ato());
+
         allActors.values().forEach(Actor::pause);
     }
 
@@ -62,7 +65,10 @@ public class ActorsRegistry {
                 actorsToDelete.add(name);
             }
         });
-        actorsToDelete.forEach(name -> currentInGameActors.remove(name));
+        actorsToDelete.forEach(name -> {
+            currentInGameActors.get(name).pause();
+            currentInGameActors.remove(name);
+        });
     }
 
     private void updateInGameActors(GameLevel level) {
@@ -90,6 +96,10 @@ public class ActorsRegistry {
 
     public void drawAll(SpriteBatch batch){
         currentInGameActors.values().forEach(a -> a.draw(batch));
+    }
+
+    public void drawAll(ShapeRenderer renderer){
+        currentInGameActors.values().forEach(a -> a.draw(renderer));
     }
 
     public void updatePositions(){

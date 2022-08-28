@@ -7,11 +7,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.actors.Coordinates;
+import com.mygdx.game.util.ObjectRegistry;
 import com.mygdx.game.util.TextureRegistry;
 
 public class Book extends GameObject{
-    private static final int TTL = 5;
+    private static final int TTL = 7;
     private final long createdAt;
+    private boolean isOutdated;
 
     public Book(Coordinates coordinates, long createdAtSeconds) {
         this.texture = TextureRegistry.bookTexture;
@@ -27,7 +29,7 @@ public class Book extends GameObject{
 
     @Override
     public boolean isOutdated(long currentGameTime){
-        return currentGameTime-createdAt>TTL;
+        return currentGameTime-createdAt>TTL || isOutdated;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class Book extends GameObject{
     }
 
     @Override
-    public void dispose() {
-        texture.dispose();
+    public void setAsDeleted() {
+        isOutdated = true;
     }
 }

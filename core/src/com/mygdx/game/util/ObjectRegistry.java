@@ -28,9 +28,13 @@ public class ObjectRegistry {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
+//                objects.stream().filter(o -> o.isOutdated(time)).forEach(GameObject::dispose);
+
                 objects.removeIf(o -> o.isOutdated(time));
             }
         }, 0f, 0.5f);
+
+
     }
 
     public void drawAll(SpriteBatch batch){
@@ -48,11 +52,15 @@ public class ObjectRegistry {
     }
 
     public void updatePositions(){
-        objects.forEach(o -> {
-            Coordinates coordinates = o.calculateNewCoordinates();
-            o.setCoordinates(coordinates);
-        });
+        for (GameObject object : objects) {
+            object.setCoordinates(object.calculateNewCoordinates());
+        }
     }
+
+    public boolean exists(GameObject gameObject){
+        return objects.contains(gameObject);
+    }
+
 
 
 }

@@ -2,6 +2,7 @@ package com.mygdx.game.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.objects.GameObject;
 import lombok.AllArgsConstructor;
@@ -36,9 +37,14 @@ public abstract class Actor {
     public void setInitialPace(float pace){
         this.pace = pace;
     }
-    public void dispose(){}
-    public void draw(SpriteBatch batch){
+    public void dispose(){
         texture.dispose();
+    }
+    public void draw(SpriteBatch batch){
+
+    }
+
+    public void draw(ShapeRenderer renderer){
     }
 
     public Coordinates placeObject(GameObject object) {

@@ -7,13 +7,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.actors.Coordinates;
 import com.mygdx.game.util.Direction;
 import com.mygdx.game.util.Properties;
+import com.mygdx.game.util.TextureRegistry;
 
 public class Niezaliczone extends GameObject {
     private final Direction direction;
     private boolean isAlive = true;
 
     public Niezaliczone(Coordinates initialCoordinates, Direction direction) {
-        texture = new Texture(Gdx.files.internal("heart.png"));
+        texture = TextureRegistry.nzalTexture;
         rectangle = new Rectangle();
         rectangle.x = initialCoordinates.x;
         rectangle.y = initialCoordinates.y;
