@@ -11,17 +11,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.actors.Ato;
-import com.mygdx.game.game.GameLevel;
 import com.mygdx.game.game.PWGame;
 import com.mygdx.game.objects.LinuxPenguin;
 import com.mygdx.game.objects.Niezaliczone;
 import com.mygdx.game.util.ActorsRegistry;
-import com.mygdx.game.util.Direction;
 import com.mygdx.game.util.ObjectRegistry;
 import com.mygdx.game.util.Properties;
 import com.mygdx.game.actors.Actor;
 import com.mygdx.game.actors.Coordinates;
-import com.mygdx.game.objects.Book;
+import com.mygdx.game.objects.CleanCodeBook;
 
 import java.util.List;
 import java.util.function.Function;
@@ -93,8 +91,8 @@ public class GameScreen implements Screen {
             Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
-            Book book = new Book(new Coordinates(touchPos.x, touchPos.y), timeSurvived);
-            objectRegistry.add(book);
+            CleanCodeBook cleanCodeBook = new CleanCodeBook(new Coordinates(touchPos.x, touchPos.y), timeSurvived);
+            objectRegistry.add(cleanCodeBook);
         }
 
         checkIfJstarCollapsesWithCleanCode();
@@ -145,9 +143,9 @@ public class GameScreen implements Screen {
         if (actorsRegistry.get("jstar") == null) {
             return;
         }
-        for (Book book : objectRegistry.getAll(Book.class)) {
+        for (CleanCodeBook cleanCodeBook : objectRegistry.getAll(CleanCodeBook.class)) {
             Actor jstar = actorsRegistry.get("jstar");
-            if (jstar.getRectangle().contains(book.getRectangle())) {
+            if (jstar.getRectangle().contains(cleanCodeBook.getRectangle())) {
                 jstar.stop(5);
                 jstar.setInitialPace(jstar.getPace() * 0.8f);
             }

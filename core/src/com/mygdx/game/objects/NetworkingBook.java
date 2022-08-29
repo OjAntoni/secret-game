@@ -1,6 +1,5 @@
 package com.mygdx.game.objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,24 +11,24 @@ import com.mygdx.game.util.TextureRegistry;
 
 import java.util.function.Function;
 
-public class NetworkingBook extends GameObject{
-    private Coordinates dst;
-    private Function<Float, Float> moveFunction;
+public class NetworkingBook extends GameObject {
+    private final Coordinates dst;
+    private final Function<Float, Float> moveFunction;
     private boolean isOutdated;
     private boolean inExplosionMode;
-    private int pace;
-    private Texture boomTexture;
-    private Sound boomSound;
-    private Book dstBook;
+    private final int pace;
+    private final Texture boomTexture;
+    private final Sound boomSound;
+    private final CleanCodeBook dstCleanCodeBook;
 
-    public NetworkingBook(Coordinates srs, Coordinates dst, Book dstBook) {
-        this.dstBook = dstBook;
+    public NetworkingBook(Coordinates srs, Coordinates dst, CleanCodeBook dstCleanCodeBook) {
+        this.dstCleanCodeBook = dstCleanCodeBook;
+        this.dst = dst;
         texture = TextureRegistry.networkBookTexture;
         boomSound = SoundRegistry.boomSound;
         boomTexture = TextureRegistry.boomTexture;
-        rectangle = new Rectangle(srs.x, srs.y, texture.getWidth()/6f, texture.getHeight()/6f);
-        this.dst = dst;
-        moveFunction = (x) -> (dst.y - srs.y)/(dst.x - srs.x) * (x-srs.x) + srs.y;
+        rectangle = new Rectangle(srs.x, srs.y, texture.getWidth() / 6f, texture.getHeight() / 6f);
+        moveFunction = (x) -> (dst.y - srs.y) / (dst.x - srs.x) * (x - srs.x) + srs.y;
         pace = 5;
         inExplosionMode = false;
     }
@@ -46,28 +45,31 @@ public class NetworkingBook extends GameObject{
 
     @Override
     public Coordinates calculateNewCoordinates() {
-        if(!inExplosionMode && Math.abs(dst.x-rectangle.x+ rectangle.getWidth()/2) > pace){
+        if (!inExplosionMode && Math.abs(dst.x - rectangle.x + rectangle.getWidth() / 2) > pace) {
             rectangle.x += pace;
             rectangle.y = moveFunction.apply(rectangle.x);
-            return new Coordinates(rectangle.x, rectangle.y);
         }
-        if (!inExplosionMode){
+        if (!inExplosionMode) {
             inExplosionMode = true;
-            dstBook.setAsDeleted();
-            rectangle.x = dst.x- rectangle.width/2;
-            rectangle.y = dst.y - rectangle.height/2;
-            texture = boomTexture;
-            rectangle.width = boomTexture.getWidth()/10f;
-            rectangle.height = boomTexture.getHeight()/10f;
-            boomSound.play(0.1f);
+            dstCleanCodeBook.setAsDeleted();
+            transformBookToBoom();
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     isOutdated = true;
                 }
-            },3f,0f,1);
+            }, 3f, 0f, 1);
         }
         return new Coordinates(rectangle.x, rectangle.y);
+    }
+
+    private void transformBookToBoom() {
+        rectangle.x = dst.x - rectangle.width / 2;
+        rectangle.y = dst.y - rectangle.height / 2;
+        texture = boomTexture;
+        rectangle.width = boomTexture.getWidth() / 10f;
+        rectangle.height = boomTexture.getHeight() / 10f;
+        boomSound.play(0.1f);
     }
 
     @Override

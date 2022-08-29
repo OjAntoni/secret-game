@@ -13,24 +13,30 @@ public abstract class GameObject {
     protected Rectangle rectangle;
     protected Texture texture;
 
-    public boolean isOutdated(long currentTime){
+    public boolean isOutdated(long currentTime) {
         return false;
     }
 
-    public void draw(SpriteBatch batch){}
+    public void draw(SpriteBatch batch) {
+        batch.draw(texture, rectangle.x, rectangle.y);
+    }
 
-    public void setAsDeleted(){}
-    public void dispose(){
+    public void setAsDeleted() {
+    }
+
+    public void dispose() {
         texture.dispose();
     }
 
-    public void setCoordinates(Coordinates coordinates){
+    public void setCoordinates(Coordinates coordinates) {
         rectangle.x = coordinates.x;
         rectangle.y = coordinates.y;
     }
 
-    public Coordinates calculateNewCoordinates(){
+    public Coordinates calculateNewCoordinates() {
         return new Coordinates(rectangle.x, rectangle.y);
-    };
+    }
+
+    ;
 
 }

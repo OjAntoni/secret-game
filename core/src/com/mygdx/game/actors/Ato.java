@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.objects.Book;
+import com.mygdx.game.objects.CleanCodeBook;
 import com.mygdx.game.objects.LinuxPenguin;
 import com.mygdx.game.objects.NetworkingBook;
 import com.mygdx.game.util.Direction;
@@ -42,7 +42,7 @@ public class Ato extends Actor {
     private int secondsInPeriod;
     private Direction directionForLinux;
 
-    private final List<Book> aimedBooks;
+    private final List<CleanCodeBook> aimedCleanCodeBooks;
 
     public Ato() {
         texture = atoNormalTexture = new Texture(Gdx.files.internal("ato.png"));
@@ -66,7 +66,7 @@ public class Ato extends Actor {
 
         directionForLinux = Direction.UP;
 
-        aimedBooks = new ArrayList<>();
+        aimedCleanCodeBooks = new ArrayList<>();
 
 
     }
@@ -96,15 +96,15 @@ public class Ato extends Actor {
     }
 
     private void aimBooks() {
-        aimedBooks.removeIf(b -> !objectRegistry.exists(b));
-        List<Book> books = objectRegistry.getAll(Book.class);
-        for (Book book : books) {
-            if(!aimedBooks.contains(book)){
-                aimedBooks.add(book);
+        aimedCleanCodeBooks.removeIf(b -> !objectRegistry.exists(b));
+        List<CleanCodeBook> cleanCodeBooks = objectRegistry.getAll(CleanCodeBook.class);
+        for (CleanCodeBook cleanCodeBook : cleanCodeBooks) {
+            if(!aimedCleanCodeBooks.contains(cleanCodeBook)){
+                aimedCleanCodeBooks.add(cleanCodeBook);
                 objectRegistry.add(new NetworkingBook(
                         new Coordinates(x0, y0),
-                        new Coordinates(book.getRectangle().x, book.getRectangle().y),
-                        book
+                        new Coordinates(cleanCodeBook.getRectangle().x, cleanCodeBook.getRectangle().y),
+                        cleanCodeBook
                 ));
             }
         }

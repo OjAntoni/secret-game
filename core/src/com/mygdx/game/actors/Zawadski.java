@@ -93,15 +93,15 @@ public class Zawadski extends Actor {
     private void setDirectionForObjects() {
         if (axis.equals(Axis.VERTICAL)) {
             if (rectangle.x == 0) {
-                directionForObjects = Direction.UP;
-            } else {
-                directionForObjects = Direction.DOWN;
-            }
-        } else {
-            if (rectangle.y == 0) {
                 directionForObjects = Direction.RIGHT;
             } else {
                 directionForObjects = Direction.LEFT;
+            }
+        } else {
+            if (rectangle.y == 0) {
+                directionForObjects = Direction.UP;
+            } else {
+                directionForObjects = Direction.DOWN;
             }
         }
     }
