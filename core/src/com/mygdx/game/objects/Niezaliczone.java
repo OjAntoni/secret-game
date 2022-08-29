@@ -11,7 +11,7 @@ public class Niezaliczone extends GameObject {
     private final Direction direction;
 
     public Niezaliczone(Coordinates initialCoordinates, Direction direction) {
-        texture = TextureRegistry.nzalTexture;
+        texture = TextureRegistry.getInstance().nzalTexture;
         rectangle = new Rectangle();
         rectangle.x = initialCoordinates.x;
         rectangle.y = initialCoordinates.y;

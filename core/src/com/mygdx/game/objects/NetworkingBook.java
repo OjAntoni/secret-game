@@ -24,9 +24,9 @@ public class NetworkingBook extends GameObject {
     public NetworkingBook(Coordinates srs, Coordinates dst, CleanCodeBook dstCleanCodeBook) {
         this.dstCleanCodeBook = dstCleanCodeBook;
         this.dst = dst;
-        texture = TextureRegistry.networkBookTexture;
-        boomSound = SoundRegistry.boomSound;
-        boomTexture = TextureRegistry.boomTexture;
+        texture = TextureRegistry.getInstance().networkBookTexture;
+        boomSound = SoundRegistry.getInstance().boomSound;
+        boomTexture = TextureRegistry.getInstance().boomTexture;
         rectangle = new Rectangle(srs.x, srs.y, texture.getWidth() / 6f, texture.getHeight() / 6f);
         moveFunction = (x) -> (dst.y - srs.y) / (dst.x - srs.x) * (x - srs.x) + srs.y;
         pace = 5;

@@ -11,7 +11,7 @@ public class CleanCodeBook extends GameObject {
     private boolean isOutdated;
 
     public CleanCodeBook(Coordinates coordinates, long createdAtSeconds) {
-        this.texture = TextureRegistry.bookTexture;
+        this.texture = TextureRegistry.getInstance().bookTexture;
 
         this.rectangle = new Rectangle(coordinates.x - texture.getWidth() / 20f,
                 coordinates.y - texture.getHeight() / 20f,

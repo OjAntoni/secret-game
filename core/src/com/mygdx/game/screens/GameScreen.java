@@ -210,18 +210,6 @@ public class GameScreen implements Screen {
         }, 1f, 1f);
     }
 
-//    public void startLevelTimer() {
-//        Timer.schedule(new Timer.Task() {
-//            int level = 1;
-//
-//            @Override
-//            public void run() {
-//                actorsRegistry.updateInGameActors(GameLevel.getLevel(level));
-//                level++;
-//            }
-//        }, 0f, 60f);
-//    }
-
     @Override
     public void resize(int width, int height) {
     }

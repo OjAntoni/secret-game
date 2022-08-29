@@ -28,13 +28,9 @@ public class ObjectRegistry {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-//                objects.stream().filter(o -> o.isOutdated(time)).forEach(GameObject::dispose);
-
                 objects.removeIf(o -> o.isOutdated(time));
             }
         }, 0f, 0.5f);
-
-
     }
 
     public void drawAll(SpriteBatch batch){

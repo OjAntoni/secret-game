@@ -16,7 +16,7 @@ public class LinuxPenguin extends GameObject {
     private boolean isOutdated;
 
     public LinuxPenguin(Coordinates coordinates, Direction direction) {
-        texture = TextureRegistry.linuxTexture;
+        texture = TextureRegistry.getInstance().linuxTexture;
         rectangle = new Rectangle(coordinates.x, coordinates.y, texture.getWidth() / 24f, texture.getHeight() / 24f);
         if (direction == Direction.DOWN) {
             coef = -1;
