@@ -43,6 +43,7 @@ public class Ato extends Actor {
     private Direction directionForLinux;
 
     private final List<CleanCodeBook> aimedCleanCodeBooks;
+    private Timer.Task scheduleForThrowingBooks;
 
     public Ato() {
         texture = atoNormalTexture = new Texture(Gdx.files.internal("ato.png"));
@@ -72,12 +73,7 @@ public class Ato extends Actor {
     }
 
     {
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                aimBooks();
-            }
-        }, 0f, 0.5f);
+
     }
 
     @Override
@@ -133,6 +129,9 @@ public class Ato extends Actor {
         if (scheduleForPlacingLinux != null && scheduleForPlacingLinux.isScheduled()) {
             scheduleForPlacingLinux.cancel();
         }
+        if(scheduleForThrowingBooks != null && scheduleForThrowingBooks.isScheduled()){
+            scheduleForThrowingBooks.cancel();
+        }
     }
 
     @Override
@@ -155,6 +154,13 @@ public class Ato extends Actor {
                 }
             }
         }, 0f, 1f);
+
+        scheduleForThrowingBooks = Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                aimBooks();
+            }
+        }, 0f, 0.5f);
 
         scheduleForLaser = Timer.schedule(new Timer.Task() {
             @Override
