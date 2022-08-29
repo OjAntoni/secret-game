@@ -45,11 +45,10 @@ public class NetworkingBook extends GameObject {
 
     @Override
     public Coordinates calculateNewCoordinates() {
-        if (!inExplosionMode && Math.abs(dst.x - rectangle.x + rectangle.getWidth() / 2) > pace) {
+        if (Math.abs(dst.x - rectangle.x + rectangle.getWidth() / 2) > pace) {
             rectangle.x += pace;
             rectangle.y = moveFunction.apply(rectangle.x);
-        }
-        if (!inExplosionMode) {
+        } else if (!inExplosionMode) {
             inExplosionMode = true;
             dstCleanCodeBook.setAsDeleted();
             transformBookToBoom();
