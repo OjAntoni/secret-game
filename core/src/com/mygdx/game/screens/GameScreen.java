@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.actors.Ato;
 import com.mygdx.game.game.PWGame;
+import com.mygdx.game.game.PositionHandler;
+import com.mygdx.game.game.StudentInputHandler;
 import com.mygdx.game.objects.LinuxPenguin;
 import com.mygdx.game.objects.Niezaliczone;
 import com.mygdx.game.util.ActorsRegistry;
@@ -32,18 +34,18 @@ public class GameScreen implements Screen {
     OrthographicCamera camera;
     ActorsRegistry actorsRegistry;
     ObjectRegistry objectRegistry;
+    PositionHandler studentPositionHandler;
     private long timeSurvived;
 
     public GameScreen(final PWGame game) {
         this.game = game;
         this.objectRegistry = ObjectRegistry.getInstance();
         this.actorsRegistry = new ActorsRegistry();
-//        actorsRegistry.updateInGameActors(GameLevel.ONE);
+        this.studentPositionHandler = new StudentInputHandler(actorsRegistry.get("student"));
         loadMusic();
         configMusic();
         configCamera();
         startSecondsTimer();
-//        startLevelTimer();
     }
 
     private void configCamera() {
@@ -79,13 +81,7 @@ public class GameScreen implements Screen {
         drawActors();
         game.batch.end();
 
-        Actor student = actorsRegistry.get("student");
-        if (Gdx.input.isTouched()) {
-            Vector3 touchPos = new Vector3();
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            student.setCoordinates(new Coordinates(touchPos.x, touchPos.y));
-        }
+        studentPositionHandler.handleInput();
 
         if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Vector3 touchPos = new Vector3();
@@ -115,7 +111,7 @@ public class GameScreen implements Screen {
     }
 
     private void checkIfStudentCollapsesWithLinux() {
-        Actor student = actorsRegistry.get("student");
+        Actor student = actorsRegistry.getCurrent("student");
         List<LinuxPenguin> linuxes = objectRegistry.getAll(LinuxPenguin.class);
         linuxes.forEach(l -> {
             if (student.getRectangle().contains(l.getRectangle())) {
@@ -129,7 +125,7 @@ public class GameScreen implements Screen {
 
 
     private void checkIfWilkCollapsesWithNiezaliczone() {
-        Actor wilk = actorsRegistry.get("wilk");
+        Actor wilk = actorsRegistry.getCurrent("wilk");
         if (wilk != null) {
             for (Niezaliczone nzal : objectRegistry.getAll(Niezaliczone.class)) {
                 if (wilk.getRectangle().contains(nzal.getRectangle())) {
@@ -140,11 +136,11 @@ public class GameScreen implements Screen {
     }
 
     private void checkIfJstarCollapsesWithCleanCode() {
-        if (actorsRegistry.get("jstar") == null) {
+        if (actorsRegistry.getCurrent("jstar") == null) {
             return;
         }
         for (CleanCodeBook cleanCodeBook : objectRegistry.getAll(CleanCodeBook.class)) {
-            Actor jstar = actorsRegistry.get("jstar");
+            Actor jstar = actorsRegistry.getCurrent("jstar");
             if (jstar.getRectangle().contains(cleanCodeBook.getRectangle())) {
                 jstar.stop(5);
                 jstar.setInitialPace(jstar.getPace() * 0.8f);
@@ -153,12 +149,12 @@ public class GameScreen implements Screen {
     }
 
     private boolean studentLoosedTheGame() {
-        Actor student = actorsRegistry.get("student");
+        Actor student = actorsRegistry.getCurrent("student");
         return isStudentEatenByJstar(student) || isStudentCatchedNzal(student) || isStudentDeadByLaser(student);
     }
 
     private boolean isStudentDeadByLaser(Actor student) {
-        Ato ato = (Ato) actorsRegistry.get("ato");
+        Ato ato = (Ato) actorsRegistry.getCurrent("ato");
         if (ato != null) {
             Function<Float, Float> lineFunction = ato.getLineFunction();
             Float yOfLaserIntersection = lineFunction.apply(student.getRectangle().x);
@@ -178,10 +174,10 @@ public class GameScreen implements Screen {
     }
 
     private boolean isStudentEatenByJstar(Actor student) {
-        if (actorsRegistry.get("jstar") == null) {
+        if (actorsRegistry.getCurrent("jstar") == null) {
             return false;
         }
-        return actorsRegistry.get("jstar").getRectangle().contains(student.getRectangle());
+        return actorsRegistry.getCurrent("jstar").getRectangle().contains(student.getRectangle());
     }
 
 

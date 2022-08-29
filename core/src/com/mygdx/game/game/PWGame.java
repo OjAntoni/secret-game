@@ -10,7 +10,6 @@ import com.mygdx.game.screens.MainMenuScreen;
 public class PWGame extends Game {
     public SpriteBatch batch;
     public BitmapFont font;
-
     public MainMenuScreen mainMenuScreen;
     public ShapeRenderer renderer;
 

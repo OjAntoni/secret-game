@@ -12,8 +12,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class ActorsRegistry {
@@ -81,8 +79,11 @@ public class ActorsRegistry {
         }
     }
 
-    public Actor get(String name){
+    public Actor getCurrent(String name){
         return currentInGameActors.get(name);
+    }
+    public Actor get(String name){
+        return allActors.get(name);
     }
 
     public List<Actor> getAll(){
@@ -104,8 +105,10 @@ public class ActorsRegistry {
 
     public void updatePositions(){
         currentInGameActors.values().forEach(a -> {
-            Coordinates coordinates = a.calculateNewCoordinates();
-            a.setCoordinates(coordinates);
+            if(!a.getClass().equals(Student.class)){
+                Coordinates coordinates = a.calculateNewCoordinates();
+                a.setCoordinates(coordinates);
+            }
         });
     }
 }
