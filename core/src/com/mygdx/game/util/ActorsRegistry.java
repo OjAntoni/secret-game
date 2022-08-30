@@ -44,7 +44,7 @@ public class ActorsRegistry {
                 updateInGameActors(GameLevel.getLevel(level%4+1));
                 level++;
             }
-        }, 0f, 5f);
+        }, 0f, Properties.LEVEL_DURATION);
     }
 
     {

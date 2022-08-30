@@ -17,6 +17,7 @@ import com.mygdx.game.game.StudentInputHandler;
 import com.mygdx.game.objects.LinuxPenguin;
 import com.mygdx.game.objects.Niezaliczone;
 import com.mygdx.game.util.ActorsRegistry;
+import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.ObjectRegistry;
 import com.mygdx.game.util.Properties;
 import com.mygdx.game.actors.Actor;
@@ -35,17 +36,17 @@ public class GameScreen implements Screen {
     ActorsRegistry actorsRegistry;
     ObjectRegistry objectRegistry;
     PositionHandler studentPositionHandler;
-    private long timeSurvived;
+    InGameTimer timer;
 
     public GameScreen(final PWGame game) {
         this.game = game;
         this.objectRegistry = ObjectRegistry.getInstance();
         this.actorsRegistry = new ActorsRegistry();
         this.studentPositionHandler = new StudentInputHandler(actorsRegistry.get("student"));
+        this.timer = InGameTimer.getInstance();
         loadMusic();
         configMusic();
         configCamera();
-        startSecondsTimer();
     }
 
     private void configCamera() {
@@ -87,7 +88,7 @@ public class GameScreen implements Screen {
             Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
-            CleanCodeBook cleanCodeBook = new CleanCodeBook(new Coordinates(touchPos.x, touchPos.y), timeSurvived);
+            CleanCodeBook cleanCodeBook = new CleanCodeBook(new Coordinates(touchPos.x, touchPos.y), timer.getTime());
             objectRegistry.add(cleanCodeBook);
         }
 
@@ -183,7 +184,7 @@ public class GameScreen implements Screen {
 
     private void drawMenu() {
         game.font.setColor(Color.WHITE);
-        game.font.draw(game.batch, "Time survived: " + timeSurvived + "s", 0, Properties.SCREEN_HEIGHT);
+        game.font.draw(game.batch, "Time survived: " + timer.getTime() + "s", 0, Properties.SCREEN_HEIGHT);
     }
 
     private void drawObjects() {
@@ -196,16 +197,6 @@ public class GameScreen implements Screen {
 
     }
 
-    public void startSecondsTimer() {
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                timeSurvived++;
-                objectRegistry.setTime(timeSurvived);
-            }
-        }, 1f, 1f);
-    }
-
     @Override
     public void resize(int width, int height) {
     }
@@ -213,6 +204,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         backgroundMusic.play();
+        timer.start();
     }
 
     @Override

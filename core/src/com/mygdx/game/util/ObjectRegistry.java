@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class ObjectRegistry {
     private static final ObjectRegistry registry = new ObjectRegistry();
+    private final InGameTimer timer = InGameTimer.getInstance();
 
     public static ObjectRegistry getInstance(){
         return registry;
@@ -21,14 +22,12 @@ public class ObjectRegistry {
     }
 
     private final List<GameObject> objects = new LinkedList<>();
-    @Setter
-    private long time;
 
     {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                objects.removeIf(o -> o.isOutdated(time));
+                objects.removeIf(o -> o.isOutdated(timer.getTime()));
             }
         }, 0f, 0.5f);
     }
