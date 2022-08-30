@@ -1,10 +1,12 @@
 package com.mygdx.game.util;
 
 import com.badlogic.gdx.utils.Timer;
+import lombok.Getter;
 
 public class InGameTimer {
     private static final InGameTimer instance = new InGameTimer();
-    private int time;
+    @Getter
+    private int timeMillis;
     private Timer.Task timer;
 
     public static InGameTimer getInstance(){
@@ -15,20 +17,21 @@ public class InGameTimer {
         timer = Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                time++;
+                timeMillis++;
             }
-        }, 1f, 1f);
+        }, 0.001f, 0.001f);
     }
 
     public int getTime(){
-        return time;
+        return timeMillis/1000;
     }
+
 
     public void stop(){
         timer.cancel();
     }
 
     public void clear(){
-        time=0;
+        timeMillis =0;
     }
 }

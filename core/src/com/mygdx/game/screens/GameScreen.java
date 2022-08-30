@@ -39,14 +39,14 @@ public class GameScreen implements Screen {
     InGameTimer timer;
 
     public GameScreen(final PWGame game) {
-        this.game = game;
-        this.objectRegistry = ObjectRegistry.getInstance();
-        this.actorsRegistry = new ActorsRegistry();
-        this.studentPositionHandler = new StudentInputHandler(actorsRegistry.get("student"));
-        this.timer = InGameTimer.getInstance();
         loadMusic();
         configMusic();
         configCamera();
+        this.game = game;
+        this.objectRegistry = ObjectRegistry.getInstance();
+        this.actorsRegistry = new ActorsRegistry();
+        this.studentPositionHandler = new StudentInputHandler(actorsRegistry.get("student"), camera);
+        this.timer = InGameTimer.getInstance();
     }
 
     private void configCamera() {
@@ -63,7 +63,6 @@ public class GameScreen implements Screen {
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("plants_vs_zombies_28 - Graze the Roof (in game).mp3"));
         looseSound = Gdx.audio.newSound(Gdx.files.internal("421872__theuncertainman__loose-archers-british-male.mp3"));
     }
-
 
     @Override
     public void render(float delta) {
@@ -83,14 +82,6 @@ public class GameScreen implements Screen {
         game.batch.end();
 
         studentPositionHandler.handleInput();
-
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            Vector3 touchPos = new Vector3();
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            CleanCodeBook cleanCodeBook = new CleanCodeBook(new Coordinates(touchPos.x, touchPos.y), timer.getTime());
-            objectRegistry.add(cleanCodeBook);
-        }
 
         checkIfJstarCollapsesWithCleanCode();
         checkIfWilkCollapsesWithNiezaliczone();

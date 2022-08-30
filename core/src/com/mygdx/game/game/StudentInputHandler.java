@@ -2,16 +2,26 @@ package com.mygdx.game.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.graphics.Camera;
 import com.mygdx.game.actors.Actor;
 import com.mygdx.game.actors.Coordinates;
 import com.mygdx.game.objects.CleanCodeBook;
+import com.mygdx.game.util.InGameTimer;
+import com.mygdx.game.util.ObjectRegistry;
+import com.mygdx.game.util.Properties;
 
 public class StudentInputHandler implements PositionHandler {
     private final Actor student;
+    private final ObjectRegistry objectRegistry;
+    private final Camera camera;
+    private final InGameTimer timer;
+    private float timeLastCleanCodeBookPlaced;
 
-    public StudentInputHandler(Actor student) {
+    public StudentInputHandler(Actor student, Camera camera) {
         this.student = student;
+        this.objectRegistry = ObjectRegistry.getInstance();
+        this.camera = camera;
+        this.timer = InGameTimer.getInstance();
     }
 
     @Override
@@ -39,5 +49,14 @@ public class StudentInputHandler implements PositionHandler {
             c.x -= 3;
         }
         student.setCoordinates(c);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            if(timer.getTimeMillis() - timeLastCleanCodeBookPlaced > Properties.PLACING_CLEAN_CODE_INTERVAL_MS){
+                CleanCodeBook cleanCodeBook = new CleanCodeBook(student.getCoordinates(), timer.getTime());
+                objectRegistry.add(cleanCodeBook);
+                timeLastCleanCodeBookPlaced = timer.getTimeMillis();
+            }
+        }
+
     }
 }
