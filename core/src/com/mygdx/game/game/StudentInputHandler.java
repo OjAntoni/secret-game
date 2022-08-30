@@ -10,7 +10,7 @@ import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.ObjectRegistry;
 import com.mygdx.game.util.Properties;
 
-public class StudentInputHandler implements PositionHandler {
+public class StudentInputHandler implements InputHandler {
     private final Actor student;
     private final ObjectRegistry objectRegistry;
     private final Camera camera;

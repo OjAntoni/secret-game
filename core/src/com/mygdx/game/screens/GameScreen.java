@@ -1,18 +1,15 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.actors.Ato;
 import com.mygdx.game.game.PWGame;
-import com.mygdx.game.game.PositionHandler;
+import com.mygdx.game.game.InputHandler;
 import com.mygdx.game.game.StudentInputHandler;
 import com.mygdx.game.objects.LinuxPenguin;
 import com.mygdx.game.objects.Niezaliczone;
@@ -21,7 +18,6 @@ import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.ObjectRegistry;
 import com.mygdx.game.util.Properties;
 import com.mygdx.game.actors.Actor;
-import com.mygdx.game.actors.Coordinates;
 import com.mygdx.game.objects.CleanCodeBook;
 
 import java.util.List;
@@ -35,7 +31,7 @@ public class GameScreen implements Screen {
     OrthographicCamera camera;
     ActorsRegistry actorsRegistry;
     ObjectRegistry objectRegistry;
-    PositionHandler studentPositionHandler;
+    InputHandler studentInputHandler;
     InGameTimer timer;
 
     public GameScreen(final PWGame game) {
@@ -45,7 +41,7 @@ public class GameScreen implements Screen {
         this.game = game;
         this.objectRegistry = ObjectRegistry.getInstance();
         this.actorsRegistry = new ActorsRegistry();
-        this.studentPositionHandler = new StudentInputHandler(actorsRegistry.get("student"), camera);
+        this.studentInputHandler = new StudentInputHandler(actorsRegistry.get("student"), camera);
         this.timer = InGameTimer.getInstance();
     }
 
@@ -81,7 +77,7 @@ public class GameScreen implements Screen {
         drawActors();
         game.batch.end();
 
-        studentPositionHandler.handleInput();
+        studentInputHandler.handleInput();
 
         checkIfJstarCollapsesWithCleanCode();
         checkIfWilkCollapsesWithNiezaliczone();
@@ -136,6 +132,7 @@ public class GameScreen implements Screen {
             if (jstar.getRectangle().contains(cleanCodeBook.getRectangle())) {
                 jstar.stop(5);
                 jstar.setInitialPace(jstar.getPace() * 0.8f);
+                cleanCodeBook.setAsDeleted();
             }
         }
     }

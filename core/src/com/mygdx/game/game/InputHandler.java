@@ -1,5 +1,5 @@
 package com.mygdx.game.game;
 
-public interface PositionHandler {
+public interface InputHandler {
     void handleInput();
 }

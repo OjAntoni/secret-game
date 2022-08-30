@@ -13,10 +13,11 @@ public class CleanCodeBook extends GameObject {
     public CleanCodeBook(Coordinates coordinates, long createdAtSeconds) {
         this.texture = TextureRegistry.getInstance().bookTexture;
 
-        this.rectangle = new Rectangle(coordinates.x - texture.getWidth() / 20f,
-                coordinates.y - texture.getHeight() / 20f,
-                texture.getWidth() / 10f,
-                texture.getHeight() / 10f);
+        this.rectangle = new Rectangle();
+        rectangle.setWidth(texture.getWidth() / 10f);
+        rectangle.setHeight(texture.getHeight() / 10f);
+        rectangle.x = coordinates.x;
+        rectangle.y = coordinates.y + rectangle.height/2;
 
         createdAt = createdAtSeconds;
     }
