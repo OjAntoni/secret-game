@@ -28,17 +28,10 @@ public class Student extends Actor{
     @Override
     public void setCoordinates(Coordinates coordinates) {
         if(isStopped){
-//            if(initialStop){
-//                rectangle.x = coordinates.x - rectangle.width / 2;
-//                rectangle.y = coordinates.y - rectangle.height / 2;
-//                initialStop = false;
-//            }
             return;
         }
         rectangle.x = coordinates.x;
         rectangle.y = coordinates.y;
-//        rectangle.x = coordinates.x - rectangle.width / 2;
-//        rectangle.y = coordinates.y - rectangle.height / 2;
         if (rectangle.x < 0)
             rectangle.x = 0;
         if (rectangle.x > Properties.SCREEN_WIDTH - rectangle.width)

@@ -54,8 +54,8 @@ public class Ato extends Actor {
         rectangle.x = 0;
         rectangle.y = (Properties.SCREEN_HEIGHT - texture.getHeight()) / 2f;
 
-        x0 = rectangle.getWidth() / 2f;
-        y0 = rectangle.y + rectangle.height / 2f;
+        x0 = rectangle.width / 2f;
+        y0 = rectangle.y + rectangle.height/4f;
 
         r = new Random();
 
@@ -68,12 +68,6 @@ public class Ato extends Actor {
         directionForLinux = Direction.UP;
 
         aimedCleanCodeBooks = new ArrayList<>();
-
-
-    }
-
-    {
-
     }
 
     @Override

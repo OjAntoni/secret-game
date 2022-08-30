@@ -41,10 +41,10 @@ public class ActorsRegistry {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
+                updateInGameActors(GameLevel.getLevel(level%4+1));
                 level++;
-                updateInGameActors(GameLevel.getLevel(level));
             }
-        }, 0f, 60f);
+        }, 0f, 5f);
     }
 
     {

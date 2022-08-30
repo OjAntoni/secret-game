@@ -8,7 +8,7 @@ public enum GameLevel {
     ONE(List.of("ato")),
     TWO(List.of("jstar", "wilk")),
     THREE(List.of("jstar", "zawadski", "ato")),
-    FOUR(List.of("jstar", "zawadski", "ato", "misiuk"));
+    FOUR(List.of("jstar", "zawadski", "ato", "wilk"));
 
     @Getter
     private final List<String> actorNamesInGame;

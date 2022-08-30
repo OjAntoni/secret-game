@@ -114,7 +114,7 @@ public class GameScreen implements Screen {
         Actor student = actorsRegistry.getCurrent("student");
         List<LinuxPenguin> linuxes = objectRegistry.getAll(LinuxPenguin.class);
         linuxes.forEach(l -> {
-            if (student.getRectangle().contains(l.getRectangle())) {
+            if (student.getRectangle().overlaps(l.getRectangle())) {
                 l.setAsDeleted();
                 if (student.canBeMoved()) {
                     student.stop(3);

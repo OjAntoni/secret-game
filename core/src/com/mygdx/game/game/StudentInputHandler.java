@@ -16,37 +16,28 @@ public class StudentInputHandler implements PositionHandler {
 
     @Override
     public void handleInput() {
+        Coordinates c = student.getCoordinates();
         if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.D)) {
-            student.getRectangle().y += 2;
-            student.getRectangle().x += 2;
+            c.y+=2;
+            c.x+=2;
         } else if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.S)) {
-            student.getRectangle().y -= 2;
-            student.getRectangle().x += 2;
+            c.y -= 2;
+            c.x += 2;
         } else if (Gdx.input.isKeyPressed(Input.Keys.S) && Gdx.input.isKeyPressed(Input.Keys.A)) {
-            student.getRectangle().y -= 2;
-            student.getRectangle().x -= 2;
+            c.y -= 2;
+            c.x -= 2;
         } else if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.A)) {
-            student.getRectangle().y += 2;
-            student.getRectangle().x -= 2;
+            c.y += 2;
+            c.x -= 2;
         } else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            student.getRectangle().y+=2;
+            c.y+=3;
         } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            student.getRectangle().x += 2;
+            c.x += 3;
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            student.getRectangle().y-=2;
+            c.y-=3;
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            student.getRectangle().x -= 2;
+            c.x -= 3;
         }
-
-
-
-//        else if (Gdx.input.isTouched()) {
-//            Vector3 touchPos = new Vector3();
-//            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-//            camera.unproject(touchPos);
-//            student.setCoordinates(new Coordinates(touchPos.x, touchPos.y));
-//        }
-
-
+        student.setCoordinates(c);
     }
 }
