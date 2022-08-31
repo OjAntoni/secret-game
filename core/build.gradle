@@ -1,11 +1,16 @@
 sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.java.srcDirs = ["src/"]
 
 eclipse.project.name = appName + "-core"
 
-dependencies{
+dependencies {
+    implementation 'org.springframework:spring-websocket:5.2.20.RELEASE'
+    implementation group: 'org.springframework', name: 'spring-messaging', version: '5.2.20.RELEASE'
+    implementation group: 'org.glassfish.tyrus.bundles', name: 'tyrus-standalone-client', version: '1.9'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 

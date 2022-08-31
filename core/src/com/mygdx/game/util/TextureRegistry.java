@@ -10,6 +10,7 @@ public class TextureRegistry {
     public final Texture boomTexture = new Texture(Gdx.files.internal("8e4eca42b17e4b3.png"));
     public final Texture nzalTexture = new Texture(Gdx.files.internal("heart.png"));
     public final Texture linuxTexture = new Texture(Gdx.files.internal("Tux.svg.png"));
+    public final Texture studentTexture = new Texture(Gdx.files.internal("student.png"));
 
     public static synchronized TextureRegistry getInstance(){
         return instance;

@@ -6,22 +6,22 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.actors.Ato;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mygdx.game.actors.Player;
+import com.mygdx.game.actors.PlayersRegistry;
 import com.mygdx.game.game.PWGame;
 import com.mygdx.game.game.InputHandler;
 import com.mygdx.game.game.StudentInputHandler;
-import com.mygdx.game.objects.LinuxPenguin;
-import com.mygdx.game.objects.Niezaliczone;
-import com.mygdx.game.util.ActorsRegistry;
+import com.mygdx.game.net.PlayersWsClient;
 import com.mygdx.game.util.InGameTimer;
-import com.mygdx.game.util.ObjectRegistry;
 import com.mygdx.game.util.Properties;
-import com.mygdx.game.actors.Actor;
-import com.mygdx.game.objects.CleanCodeBook;
+import com.mygdx.game.util.TextureRegistry;
+import lombok.SneakyThrows;
 
 import java.util.List;
-import java.util.function.Function;
 
 
 public class GameScreen implements Screen {
@@ -29,20 +29,23 @@ public class GameScreen implements Screen {
     Music backgroundMusic;
     Sound looseSound;
     OrthographicCamera camera;
-    ActorsRegistry actorsRegistry;
-    ObjectRegistry objectRegistry;
     InputHandler studentInputHandler;
     InGameTimer timer;
+    PlayersWsClient playersWsClient = new PlayersWsClient();
+    PlayersRegistry playersRegistry = PlayersRegistry.getInstance();
+    ObjectMapper objectMapper = new ObjectMapper();
+    Player me;
 
     public GameScreen(final PWGame game) {
         loadMusic();
         configMusic();
         configCamera();
         this.game = game;
-        this.objectRegistry = ObjectRegistry.getInstance();
-        this.actorsRegistry = new ActorsRegistry();
-        this.studentInputHandler = new StudentInputHandler(actorsRegistry.get("student"), camera);
         this.timer = InGameTimer.getInstance();
+        String myId = playersWsClient.getSession().getId();
+        System.out.println("my id :   " + myId);
+        me = playersRegistry.get(myId);
+        studentInputHandler = new StudentInputHandler(me, camera);
     }
 
     private void configCamera() {
@@ -60,129 +63,30 @@ public class GameScreen implements Screen {
         looseSound = Gdx.audio.newSound(Gdx.files.internal("421872__theuncertainman__loose-archers-british-male.mp3"));
     }
 
+
     @Override
+    @SneakyThrows
     public void render(float delta) {
+        playersWsClient.send(objectMapper.writeValueAsString(me.getCoordinates()));
+
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-        game.renderer.setAutoShapeType(true);
-        game.renderer.begin();
-        actorsRegistry.drawAll(game.renderer);
-        game.renderer.end();
-
         game.batch.begin();
         drawMenu();
-        drawObjects();
-        drawActors();
+        List<Player> all = playersRegistry.getAll();
+        for (Player player : all) {
+            player.draw(game.batch, TextureRegistry.getInstance().studentTexture);
+        }
         game.batch.end();
-
         studentInputHandler.handleInput();
 
-        checkIfJstarCollapsesWithCleanCode();
-        checkIfWilkCollapsesWithNiezaliczone();
-        checkIfStudentCollapsesWithLinux();
-
-        if (studentLoosedTheGame()) {
-            looseSound.play();
-            try {
-                Thread.sleep(2000);
-                dispose();
-                System.exit(0);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        actorsRegistry.updatePositions();
-        objectRegistry.updatePositions();
     }
-
-    private void checkIfStudentCollapsesWithLinux() {
-        Actor student = actorsRegistry.getCurrent("student");
-        List<LinuxPenguin> linuxes = objectRegistry.getAll(LinuxPenguin.class);
-        linuxes.forEach(l -> {
-            if (student.getRectangle().overlaps(l.getRectangle())) {
-                l.setAsDeleted();
-                if (student.canBeMoved()) {
-                    student.stop(3);
-                }
-            }
-        });
-    }
-
-
-    private void checkIfWilkCollapsesWithNiezaliczone() {
-        Actor wilk = actorsRegistry.getCurrent("wilk");
-        if (wilk != null) {
-            for (Niezaliczone nzal : objectRegistry.getAll(Niezaliczone.class)) {
-                if (wilk.getRectangle().contains(nzal.getRectangle())) {
-                    wilk.deleteFromGame();
-                }
-            }
-        }
-    }
-
-    private void checkIfJstarCollapsesWithCleanCode() {
-        if (actorsRegistry.getCurrent("jstar") == null) {
-            return;
-        }
-        for (CleanCodeBook cleanCodeBook : objectRegistry.getAll(CleanCodeBook.class)) {
-            Actor jstar = actorsRegistry.getCurrent("jstar");
-            if (jstar.getRectangle().contains(cleanCodeBook.getRectangle())) {
-                jstar.stop(5);
-                jstar.setInitialPace(jstar.getPace() * 0.8f);
-                cleanCodeBook.setAsDeleted();
-            }
-        }
-    }
-
-    private boolean studentLoosedTheGame() {
-        Actor student = actorsRegistry.getCurrent("student");
-        return isStudentEatenByJstar(student) || isStudentCatchedNzal(student) || isStudentDeadByLaser(student);
-    }
-
-    private boolean isStudentDeadByLaser(Actor student) {
-        Ato ato = (Ato) actorsRegistry.getCurrent("ato");
-        if (ato != null) {
-            Function<Float, Float> lineFunction = ato.getLineFunction();
-            Float yOfLaserIntersection = lineFunction.apply(student.getRectangle().x);
-            boolean caughtByLaser = yOfLaserIntersection > student.getRectangle().y && yOfLaserIntersection < student.getRectangle().y + student.getRectangle().height;
-            return caughtByLaser
-                    && student.getRectangle().x > ato.getX0()
-                    && ato.isLaserActive();
-        }
-        return false;
-    }
-
-    private boolean isStudentCatchedNzal(Actor student) {
-        return objectRegistry.getAll(Niezaliczone.class)
-                .stream()
-                .anyMatch(nzal -> student.getRectangle()
-                        .contains(nzal.getRectangle()));
-    }
-
-    private boolean isStudentEatenByJstar(Actor student) {
-        if (actorsRegistry.getCurrent("jstar") == null) {
-            return false;
-        }
-        return actorsRegistry.getCurrent("jstar").getRectangle().contains(student.getRectangle());
-    }
-
 
     private void drawMenu() {
         game.font.setColor(Color.WHITE);
         game.font.draw(game.batch, "Time survived: " + timer.getTime() + "s", 0, Properties.SCREEN_HEIGHT);
-    }
-
-    private void drawObjects() {
-        objectRegistry.drawAll(game.batch);
-    }
-
-
-    private void drawActors() {
-        actorsRegistry.drawAll(game.batch);
-
     }
 
     @Override
@@ -209,9 +113,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        actorsRegistry.dispose();
         backgroundMusic.dispose();
         looseSound.dispose();
+        playersWsClient.close();
     }
 
 }

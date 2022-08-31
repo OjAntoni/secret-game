@@ -3,30 +3,24 @@ package com.mygdx.game.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
-import com.mygdx.game.actors.Actor;
 import com.mygdx.game.actors.Coordinates;
-import com.mygdx.game.objects.CleanCodeBook;
+import com.mygdx.game.actors.Player;
 import com.mygdx.game.util.InGameTimer;
-import com.mygdx.game.util.ObjectRegistry;
-import com.mygdx.game.util.Properties;
 
 public class StudentInputHandler implements InputHandler {
-    private final Actor student;
-    private final ObjectRegistry objectRegistry;
+    private final Player me;
     private final Camera camera;
     private final InGameTimer timer;
-    private float timeLastCleanCodeBookPlaced;
 
-    public StudentInputHandler(Actor student, Camera camera) {
-        this.student = student;
-        this.objectRegistry = ObjectRegistry.getInstance();
+    public StudentInputHandler(Player me, Camera camera) {
+        this.me= me;
         this.camera = camera;
         this.timer = InGameTimer.getInstance();
     }
 
     @Override
     public void handleInput() {
-        Coordinates c = student.getCoordinates();
+        Coordinates c = me.getCoordinates();
         if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.D)) {
             c.y+=2;
             c.x+=2;
@@ -48,15 +42,6 @@ public class StudentInputHandler implements InputHandler {
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             c.x -= 3;
         }
-        student.setCoordinates(c);
-
-        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            if(timer.getTimeMillis() - timeLastCleanCodeBookPlaced > Properties.PLACING_CLEAN_CODE_INTERVAL_MS){
-                CleanCodeBook cleanCodeBook = new CleanCodeBook(student.getCoordinates(), timer.getTime());
-                objectRegistry.add(cleanCodeBook);
-                timeLastCleanCodeBookPlaced = timer.getTimeMillis();
-            }
-        }
-
+        me.setCoordinates(c);
     }
 }
