@@ -6,8 +6,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mygdx.game.actors.Player;
@@ -15,7 +13,7 @@ import com.mygdx.game.actors.PlayersRegistry;
 import com.mygdx.game.game.PWGame;
 import com.mygdx.game.game.InputHandler;
 import com.mygdx.game.game.StudentInputHandler;
-import com.mygdx.game.net.PlayersWsClient;
+import com.mygdx.game.net.WebSocketClient;
 import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.Properties;
 import com.mygdx.game.util.TextureRegistry;
@@ -31,7 +29,7 @@ public class GameScreen implements Screen {
     OrthographicCamera camera;
     InputHandler studentInputHandler;
     InGameTimer timer;
-    PlayersWsClient playersWsClient = new PlayersWsClient();
+    WebSocketClient webSocketClient = new WebSocketClient();
     PlayersRegistry playersRegistry = PlayersRegistry.getInstance();
     ObjectMapper objectMapper = new ObjectMapper();
     Player me;
@@ -42,7 +40,7 @@ public class GameScreen implements Screen {
         configCamera();
         this.game = game;
         this.timer = InGameTimer.getInstance();
-        String myId = playersWsClient.getSession().getId();
+        String myId = webSocketClient.getSession().getId();
         System.out.println("my id :   " + myId);
         me = playersRegistry.get(myId);
         studentInputHandler = new StudentInputHandler(me, camera);
@@ -67,7 +65,7 @@ public class GameScreen implements Screen {
     @Override
     @SneakyThrows
     public void render(float delta) {
-        playersWsClient.send(objectMapper.writeValueAsString(me.getCoordinates()));
+        webSocketClient.send(objectMapper.writeValueAsString(me.getCoordinates()));
 
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
@@ -115,7 +113,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         backgroundMusic.dispose();
         looseSound.dispose();
-        playersWsClient.close();
+        webSocketClient.close();
     }
 
 }
