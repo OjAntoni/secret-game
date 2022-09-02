@@ -3,8 +3,8 @@ package com.mygdx.game.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
-import com.mygdx.game.actors.Coordinates;
 import com.mygdx.game.actors.Player;
+import com.mygdx.game.messages.core.Coordinates;
 import com.mygdx.game.util.InGameTimer;
 
 public class StudentInputHandler implements InputHandler {

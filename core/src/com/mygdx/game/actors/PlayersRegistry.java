@@ -1,6 +1,8 @@
 package com.mygdx.game.actors;
 
 import com.badlogic.gdx.utils.Array;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,26 +16,25 @@ public class PlayersRegistry {
     }
 
     private final List<Player> players = new ArrayList<>();
+    @Setter @Getter
+    private Player me;
     private PlayersRegistry(){}
 
     public void add(Player player){
-        if(player.getId()==null){
-            return;
-        }
         players.add(player);
     }
 
-    public Player get(String id){
+    public Player get(int id){
         for (Player player : players) {
-            if(player.getId()!=null && player.getId().equals(id)){
+            if(player.getId()==id){
                 return player;
             }
         }
         return null;
     }
 
-    public void remove(String id){
-        players.removeIf(p -> p.getId().equals(id));
+    public void remove(int id){
+        players.removeIf(p -> p.getId()==id);
     }
 
     public List<Player> getAll(){
