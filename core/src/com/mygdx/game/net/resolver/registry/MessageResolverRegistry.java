@@ -2,10 +2,7 @@ package com.mygdx.game.net.resolver.registry;
 
 import com.mygdx.game.messages.messages.SimpleMessage;
 import com.mygdx.game.messages.messages.types.MessageType;
-import com.mygdx.game.net.resolver.DeletePlayerMessageResolver;
-import com.mygdx.game.net.resolver.MessageResolver;
-import com.mygdx.game.net.resolver.NewPlayerMessageResolver;
-import com.mygdx.game.net.resolver.PlayerCoordMessageResolver;
+import com.mygdx.game.net.resolver.*;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.HashMap;
@@ -24,6 +21,7 @@ public class MessageResolverRegistry {
         resolvers.put(MessageType.NEW_PLAYER, new NewPlayerMessageResolver());
         resolvers.put(MessageType.PLAYER_COORD, new PlayerCoordMessageResolver());
         resolvers.put(MessageType.DELETE_PLAYER, new DeletePlayerMessageResolver());
+        resolvers.put(MessageType.ACTOR_STATE, new ActorStateMessageResolver());
     }
 
     public void handle(WebSocketSession session, SimpleMessage simpleMessage){

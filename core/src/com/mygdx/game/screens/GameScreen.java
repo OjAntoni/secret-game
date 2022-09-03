@@ -8,8 +8,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mygdx.game.actors.Player;
-import com.mygdx.game.actors.PlayersRegistry;
+import com.mygdx.game.actors.ActorsRegistry;
+import com.mygdx.game.actors.player.Player;
+import com.mygdx.game.actors.player.PlayersRegistry;
 import com.mygdx.game.game.PWGame;
 import com.mygdx.game.game.InputHandler;
 import com.mygdx.game.game.StudentInputHandler;
@@ -22,7 +23,6 @@ import com.mygdx.game.util.Properties;
 import com.mygdx.game.util.TextureRegistry;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.TextMessage;
 
 import java.util.List;
@@ -37,6 +37,7 @@ public class GameScreen implements Screen {
     InGameTimer timer;
     WebSocketClient webSocketClient = new WebSocketClient();
     PlayersRegistry playersRegistry = PlayersRegistry.getInstance();
+    ActorsRegistry actorsRegistry = ActorsRegistry.getInstance();
     ObjectMapper objectMapper = new ObjectMapper();
     Player me;
 
@@ -87,6 +88,7 @@ public class GameScreen implements Screen {
             player.draw(game.batch, TextureRegistry.getInstance().studentTexture);
         }
         me.draw(game.batch, TextureRegistry.getInstance().studentTexture);
+        actorsRegistry.getCurrentActors().forEach((id, actor) -> actor.draw(game.batch));
         game.batch.end();
         studentInputHandler.handleInput();
 

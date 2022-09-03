@@ -1,10 +1,9 @@
-package com.mygdx.game.actors;
+package com.mygdx.game.actors.player;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.messages.core.Coordinates;
-import com.mygdx.game.util.TextureRegistry;
 import lombok.Getter;
 
 import java.util.Objects;

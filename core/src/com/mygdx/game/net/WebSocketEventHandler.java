@@ -2,10 +2,8 @@ package com.mygdx.game.net;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mygdx.game.actors.PlayersRegistry;
+import com.mygdx.game.actors.player.PlayersRegistry;
 import com.mygdx.game.messages.messages.SimpleMessage;
-import com.mygdx.game.messages.messages.dto.PlayerPositionDto;
-import com.mygdx.game.messages.messages.types.MessageType;
 import com.mygdx.game.net.handler.registry.ConnectionEstablishedHandlerRegistry;
 import com.mygdx.game.net.resolver.registry.MessageResolverRegistry;
 import lombok.SneakyThrows;
@@ -34,9 +32,9 @@ public class WebSocketEventHandler extends TextWebSocketHandler implements WebSo
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.info("Get message from session: "+session);
+        log.info("Got message" + message.getPayload());
         List<SimpleMessage> messages = objectMapper.readValue(message.getPayload(), new TypeReference<>() {});
-        messages.forEach(m-> messageResolverRegistry.handle(session, m));
+        messages.forEach(m -> messageResolverRegistry.handle(session, m));
     }
 
     @Override

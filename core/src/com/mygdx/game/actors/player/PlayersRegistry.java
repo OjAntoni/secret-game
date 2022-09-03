@@ -1,13 +1,10 @@
-package com.mygdx.game.actors;
+package com.mygdx.game.actors.player;
 
-import com.badlogic.gdx.utils.Array;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PlayersRegistry {
     private static final PlayersRegistry instance = new PlayersRegistry();
