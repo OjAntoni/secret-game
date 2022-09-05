@@ -6,14 +6,18 @@ import com.badlogic.gdx.graphics.Camera;
 import com.mygdx.game.actors.player.Player;
 import com.mygdx.game.messages.core.Coordinates;
 import com.mygdx.game.util.InGameTimer;
+import com.mygdx.game.util.Properties;
+import com.mygdx.game.util.TextureRegistry;
 
 public class StudentInputHandler implements InputHandler {
     private final Player me;
     private final InGameTimer timer;
+    private final TextureRegistry textureRegistry;
 
     public StudentInputHandler(Player me) {
         this.me= me;
         this.timer = InGameTimer.getInstance();
+        this.textureRegistry = TextureRegistry.getInstance();
     }
 
     @Override
@@ -40,6 +44,12 @@ public class StudentInputHandler implements InputHandler {
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             c.x -= 3;
         }
+
+        c.x = c.x < 0 ? 0: c.x;
+        c.x = c.x + 30f > Properties.SCREEN_WIDTH ? Properties.SCREEN_WIDTH - 30f : c.x;
+        c.y = c.y < 0 ? 0 : c.y;
+        c.y = c.y + 30f > Properties.SCREEN_HEIGHT ? Properties.SCREEN_HEIGHT - 30f : c.y;
+
         me.setCoordinates(c);
     }
 }
