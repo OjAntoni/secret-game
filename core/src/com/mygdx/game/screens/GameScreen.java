@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mygdx.game.actors.ActorsRegistry;
 import com.mygdx.game.actors.player.Player;
 import com.mygdx.game.actors.player.PlayersRegistry;
+import com.mygdx.game.game.GameService;
 import com.mygdx.game.game.PWGame;
 import com.mygdx.game.game.InputHandler;
 import com.mygdx.game.game.StudentInputHandler;
@@ -33,13 +34,8 @@ public class GameScreen implements Screen {
     Music backgroundMusic;
     Sound looseSound;
     OrthographicCamera camera;
-    InputHandler studentInputHandler;
-    InGameTimer timer;
-    WebSocketClient webSocketClient = new WebSocketClient();
-    PlayersRegistry playersRegistry = PlayersRegistry.getInstance();
-    ActorsRegistry actorsRegistry = ActorsRegistry.getInstance();
-    ObjectMapper objectMapper = new ObjectMapper();
-    Player me;
+    GameService gameService;
+
 
     @SneakyThrows
     public GameScreen(final PWGame game) {
@@ -47,10 +43,7 @@ public class GameScreen implements Screen {
         configMusic();
         configCamera();
         this.game = game;
-        this.timer = InGameTimer.getInstance();
-        me = playersRegistry.getMe();
-        studentInputHandler = new StudentInputHandler(me, camera);
-
+        this.gameService = new GameService();
     }
 
     private void configCamera() {
@@ -68,13 +61,10 @@ public class GameScreen implements Screen {
         looseSound = Gdx.audio.newSound(Gdx.files.internal("421872__theuncertainman__loose-archers-british-male.mp3"));
     }
 
-
     @Override
     @SneakyThrows
     public void render(float delta) {
-        webSocketClient.send(
-                new SimpleMessage(MessageType.PLAYER_COORD, objectMapper.writeValueAsString(new PlayerPositionDto(me.getCoordinates(), me.getId())))
-        );
+        gameService.sendMyCoordinates();
 
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
@@ -82,21 +72,17 @@ public class GameScreen implements Screen {
 
         game.batch.begin();
         drawMenu();
-        List<Player> all = playersRegistry.getAll();
-        all.forEach(p -> log.info(p.toString()));
-        for (Player player : all) {
-            player.draw(game.batch, TextureRegistry.getInstance().studentTexture);
-        }
-        me.draw(game.batch, TextureRegistry.getInstance().studentTexture);
-        actorsRegistry.getCurrentActors().forEach((id, actor) -> actor.draw(game.batch));
+        gameService.drawPlayers(game.batch);
+        gameService.drawActors(game.batch);
         game.batch.end();
-        studentInputHandler.handleInput();
+
+        gameService.handleInput();
 
     }
 
     private void drawMenu() {
         game.font.setColor(Color.WHITE);
-        game.font.draw(game.batch, "Time survived: " + timer.getTime() + "s", 0, Properties.SCREEN_HEIGHT);
+        game.font.draw(game.batch, "Time survived: " + gameService.getTime() + "s", 0, Properties.SCREEN_HEIGHT);
     }
 
     @Override
@@ -106,7 +92,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         backgroundMusic.play();
-        timer.start();
+        gameService.startGame();
     }
 
     @Override
@@ -126,18 +112,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         backgroundMusic.dispose();
         looseSound.dispose();
-        webSocketClient.getSession().sendMessage(new TextMessage(
-                objectMapper.writeValueAsString(List.of(
-                        new SimpleMessage(MessageType.DELETE_PLAYER,
-                                objectMapper.writeValueAsString(
-                                        new PlayerPositionDto(
-                                                playersRegistry.getMe().getCoordinates(),
-                                                playersRegistry.getMe().getId()
-                                        ))
-                        )
-                ))
-        ));
-        webSocketClient.close();
+        gameService.endGame();
     }
 
 }

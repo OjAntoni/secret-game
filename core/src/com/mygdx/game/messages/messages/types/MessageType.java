@@ -4,5 +4,6 @@ public enum MessageType {
     PLAYER_COORD,
     NEW_PLAYER,
     DELETE_PLAYER,
-    ACTOR_STATE
+    ACTOR_STATE,
+    PLAYER_LOSS
 }

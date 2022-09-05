@@ -9,12 +9,10 @@ import com.mygdx.game.util.InGameTimer;
 
 public class StudentInputHandler implements InputHandler {
     private final Player me;
-    private final Camera camera;
     private final InGameTimer timer;
 
-    public StudentInputHandler(Player me, Camera camera) {
+    public StudentInputHandler(Player me) {
         this.me= me;
-        this.camera = camera;
         this.timer = InGameTimer.getInstance();
     }
 
