@@ -36,8 +36,8 @@ public class ActorStateMessageResolver implements MessageResolver {
         if (actorsRegistry.getCurrent(id)==null) {
             actorsRegistry.addCurrent(id);
         }
-        log.info("processing actor state with id="+id);
-        log.info("processing actor state with payload="+jsonNode.get("payload").toPrettyString());
+        //log.info("processing actor state with id="+id);
+        //log.info("processing actor state with payload="+jsonNode.get("payload").toPrettyString());
         idsToAdapters.get(id).process(id, jsonNode.get("payload").toString());
     }
 

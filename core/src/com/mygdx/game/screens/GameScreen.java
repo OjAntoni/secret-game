@@ -7,26 +7,11 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mygdx.game.actors.ActorsRegistry;
-import com.mygdx.game.actors.player.Player;
-import com.mygdx.game.actors.player.PlayersRegistry;
 import com.mygdx.game.game.GameService;
 import com.mygdx.game.game.PWGame;
-import com.mygdx.game.game.InputHandler;
-import com.mygdx.game.game.StudentInputHandler;
-import com.mygdx.game.messages.messages.SimpleMessage;
-import com.mygdx.game.messages.messages.dto.PlayerPositionDto;
-import com.mygdx.game.messages.messages.types.MessageType;
-import com.mygdx.game.net.WebSocketClient;
-import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.Properties;
-import com.mygdx.game.util.TextureRegistry;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
-import org.springframework.web.socket.TextMessage;
-
-import java.util.List;
 
 @Log
 public class GameScreen implements Screen {
@@ -77,6 +62,10 @@ public class GameScreen implements Screen {
         game.batch.end();
 
         gameService.handleInput();
+        if (gameService.checkForPlayerForLoss()) {
+            gameService.sendLossMessage();
+            gameService.deleteMyPlayer();
+        }
 
     }
 

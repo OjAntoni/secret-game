@@ -40,7 +40,5 @@ public class WebSocketEventHandler extends TextWebSocketHandler implements WebSo
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
         log.info("Connection closed with session " + session);
-
-
     }
 }

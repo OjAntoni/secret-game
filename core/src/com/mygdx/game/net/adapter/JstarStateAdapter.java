@@ -16,7 +16,7 @@ public class JstarStateAdapter implements StateAdapter {
     public void process(String id, String jsonState) {
         System.out.println(jsonState);
         JstarState jstarState = objectMapper.readValue(jsonState, JstarState.class);
-        log.info("converted jstar state: "+jsonState);
+        //log.info("converted jstar state: "+jsonState);
         actorsRegistry.getCurrent(id).handleState(jstarState);
     }
 

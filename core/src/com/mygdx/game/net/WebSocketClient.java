@@ -43,7 +43,11 @@ public class WebSocketClient {
     @SneakyThrows
     public void send(SimpleMessage simpleMessage) {
         synchronized (session) {
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(List.of(simpleMessage))));
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(List.of(simpleMessage))));
+            } else {
+                log.warning("Tried to send message, but session was already closed");
+            }
         }
     }
 }

@@ -45,6 +45,10 @@ public class Player {
        batch.draw(texture, rectangle.x, rectangle.y, rectangle.width*2, rectangle.height*2);
     }
 
+    public Rectangle getRectangleCopy(){
+        return new Rectangle(rectangle);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
