@@ -18,16 +18,26 @@ import java.util.List;
 public class WebSocketClient {
     private String uri = "ws://localhost:8080/game";
     @Getter
-    private final WebSocketSession session;
+    private WebSocketSession session;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private static WebSocketClient instance = null;
 
-    public WebSocketClient() {
+    public static synchronized WebSocketClient getInstance() {
+            if (instance == null) {
+                instance = new WebSocketClient();
+            }
+        return instance;
+    }
+
+    private WebSocketClient() {
         StandardWebSocketClient client = new StandardWebSocketClient();
         try {
-            WebSocketHandler socket = new WebSocketEventHandler();
-            ListenableFuture<WebSocketSession> fut = client.doHandshake(socket, uri);
-            session = fut.get();
-            log.info("Session obtained by WebSocketClient.class: " + session);
+            if(session == null){
+                WebSocketHandler socket = new WebSocketEventHandler();
+                ListenableFuture<WebSocketSession> fut = client.doHandshake(socket, uri);
+                session = fut.get();
+                log.info("Session obtained by WebSocketClient.class: " + session);
+            }
         } catch (Throwable t) {
             t.printStackTrace();
             throw new RuntimeException(t.getMessage());

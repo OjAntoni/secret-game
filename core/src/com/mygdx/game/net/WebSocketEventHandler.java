@@ -21,7 +21,6 @@ public class WebSocketEventHandler extends TextWebSocketHandler implements WebSo
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ConnectionEstablishedHandlerRegistry connectionEstablishedHandlerRegistry = new ConnectionEstablishedHandlerRegistry();
     private final MessageResolverRegistry messageResolverRegistry = MessageResolverRegistry.getInstance();
-    private final PlayersRegistry playersRegistry = PlayersRegistry.getInstance();
 
     @Override
     @SneakyThrows
@@ -34,7 +33,14 @@ public class WebSocketEventHandler extends TextWebSocketHandler implements WebSo
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         log.info("Got message" + message.getPayload());
         List<SimpleMessage> messages = objectMapper.readValue(message.getPayload(), new TypeReference<>() {});
-        messages.forEach(m -> messageResolverRegistry.handle(session, m));
+        if(messages!=null){
+            messages.forEach(m -> {
+                log.info("resolving "+m);
+                if(messageResolverRegistry!=null)
+                    messageResolverRegistry.handle(session, m);
+            });
+        }
+
     }
 
     @Override

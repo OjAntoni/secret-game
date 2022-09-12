@@ -1,25 +1,42 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mygdx.game.game.ChatService;
 import com.mygdx.game.game.GameService;
 import com.mygdx.game.game.PWGame;
+import com.mygdx.game.messages.messages.ChatMessage;
 import com.mygdx.game.util.Properties;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 
+import java.util.List;
+
 @Log
-public class GameScreen implements Screen {
+public class GameScreen implements Screen{
     final PWGame game;
     Music backgroundMusic;
     Sound looseSound;
     OrthographicCamera camera;
     GameService gameService;
+    ChatService chatService;
+    Stage stage;
+    Table table;
+    Skin skin;
+    TextArea textArea;
+    ScrollPane scrollPane;
 
 
     @SneakyThrows
@@ -29,7 +46,9 @@ public class GameScreen implements Screen {
         configCamera();
         this.game = game;
         this.gameService = new GameService();
+        chatService = ChatService.getInstance();
     }
+
 
     private void configCamera() {
         camera = new OrthographicCamera();
@@ -67,6 +86,27 @@ public class GameScreen implements Screen {
             gameService.deleteMyPlayer();
         }
 
+        stage.act(Gdx.graphics.getDeltaTime());
+        updateChat();
+        stage.draw();
+
+    }
+
+    private void updateChat() {
+        List<ChatMessage> messages = chatService.getMessages();
+        messages.forEach(
+                m -> {
+                    Label label = new Label(
+                            String.format("%s: %s", m.getFrom(), m.getPayload()), skin);
+                    label.setWrap(true);
+                    label.setFontScale(0.75f, 0.75f);
+                    table.add(label).width(Properties.SCREEN_WIDTH * 0.2f).row();
+                }
+        );
+        if(messages.size()!=0){
+            scrollPane.scrollTo(0, 0, 0, 0);
+        }
+        messages.clear();
     }
 
     private void drawMenu() {
@@ -76,12 +116,14 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void show() {
         backgroundMusic.play();
         gameService.startGame();
+        configureChatWindow();
     }
 
     @Override
@@ -104,4 +146,56 @@ public class GameScreen implements Screen {
         gameService.endGame();
     }
 
+    private void configureChatWindow() {
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+
+        table = new Table();
+        table.setHeight(Properties.SCREEN_HEIGHT * 0.8f);
+        table.top();
+        scrollPane = new ScrollPane(table);
+        scrollPane.setPosition(Properties.SCREEN_WIDTH * 0.8f, Properties.SCREEN_HEIGHT * 0.2f);
+        scrollPane.setWidth(Properties.SCREEN_WIDTH * 0.2f);
+        scrollPane.setHeight(Properties.SCREEN_HEIGHT * 0.8f);
+        scrollPane.addListener(new InputListener(){
+            @Override
+            public boolean mouseMoved(InputEvent event, float x, float y) {
+                if(x < scrollPane.getX()){
+                    stage.unfocus(scrollPane);
+                } else {
+                    stage.setScrollFocus(scrollPane);
+                }
+                return true;
+            }
+        });
+        stage.addActor(scrollPane);
+        stage.setScrollFocus(scrollPane);
+
+        textArea = new TextArea("", skin);
+        textArea.setPosition(Properties.SCREEN_WIDTH * 0.8f, Properties.SCREEN_HEIGHT * 0.08f);
+        textArea.setWidth(Properties.SCREEN_WIDTH * 0.2f);
+        textArea.setHeight(Properties.SCREEN_HEIGHT * 0.12f);
+        stage.addActor(textArea);
+
+        TextButton sendButton = new TextButton("Send",  skin);
+        sendButton.setPosition(Properties.SCREEN_WIDTH * 0.8f, 10);
+        sendButton.setWidth(Properties.SCREEN_WIDTH * 0.2f);
+        sendButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                stage.unfocus(textArea);
+                String text = textArea.getText();
+                textArea.setText("");
+                if(text.equals("")){
+                   return;
+                }
+                gameService.sendMessageToChat(text);
+            }
+        });
+
+
+        stage.addActor(sendButton);
+
+    }
 }

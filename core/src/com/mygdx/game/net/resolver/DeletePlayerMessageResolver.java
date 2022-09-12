@@ -2,8 +2,8 @@ package com.mygdx.game.net.resolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mygdx.game.actors.player.PlayersRegistry;
-import com.mygdx.game.messages.messages.dto.PlayerPositionDto;
-import com.mygdx.game.messages.messages.types.MessageType;
+import com.mygdx.game.messages.messages.PlayerPositionDto;
+import com.mygdx.game.messages.messages.MessageType;
 import lombok.SneakyThrows;
 import org.springframework.web.socket.WebSocketSession;
 

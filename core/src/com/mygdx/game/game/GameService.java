@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mygdx.game.actors.ActorsRegistry;
 import com.mygdx.game.actors.player.Player;
 import com.mygdx.game.actors.player.PlayersRegistry;
+import com.mygdx.game.messages.messages.ChatMessage;
 import com.mygdx.game.messages.messages.SimpleMessage;
-import com.mygdx.game.messages.messages.dto.PlayerPositionDto;
-import com.mygdx.game.messages.messages.types.MessageType;
+import com.mygdx.game.messages.messages.PlayerPositionDto;
+import com.mygdx.game.messages.messages.MessageType;
 import com.mygdx.game.net.WebSocketClient;
 import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.TextureRegistry;
@@ -19,16 +20,24 @@ import java.util.List;
 
 @Log
 public class GameService {
-    private final InputHandler studentInputHandler;
+    private InputHandler studentInputHandler;
     private final InGameTimer timer = InGameTimer.getInstance();
-    private final WebSocketClient webSocketClient = new WebSocketClient();
+    private final WebSocketClient webSocketClient = WebSocketClient.getInstance();
     private final PlayersRegistry playersRegistry = PlayersRegistry.getInstance();
     private final ActorsRegistry actorsRegistry = ActorsRegistry.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private Player me;
+    private String myName;
 
+    @SneakyThrows
     public GameService() {
-        me = playersRegistry.getMe();
+        Player me = new Player();
+        this.me = me;
+        log.info("Created me: " + me);
+        playersRegistry.setMe(me);
+        webSocketClient.getSession().sendMessage(new TextMessage(objectMapper.writeValueAsString(List.of(new SimpleMessage(MessageType.NEW_PLAYER,
+                objectMapper.writeValueAsString(new PlayerPositionDto(me.getCoordinates(), me.getId())))))));
+        myName = me.getId()+"";
         studentInputHandler = new StudentInputHandler(me);
     }
 
@@ -65,8 +74,10 @@ public class GameService {
         return timer.getTime();
     }
 
+    @SneakyThrows
     public void startGame() {
         timer.start();
+
     }
 
     @SneakyThrows
@@ -125,5 +136,11 @@ public class GameService {
                 )
         );
         me = null;
+    }
+
+    @SneakyThrows
+    public void sendMessageToChat(String text){
+        webSocketClient.send(new SimpleMessage(MessageType.CHAT_MESSAGE,
+                objectMapper.writeValueAsString(new ChatMessage(myName+"", text))));
     }
 }

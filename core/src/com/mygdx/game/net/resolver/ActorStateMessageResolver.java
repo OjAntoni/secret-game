@@ -3,7 +3,7 @@ package com.mygdx.game.net.resolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mygdx.game.actors.ActorsRegistry;
-import com.mygdx.game.messages.messages.types.MessageType;
+import com.mygdx.game.messages.messages.MessageType;
 import com.mygdx.game.net.adapter.JstarStateAdapter;
 import com.mygdx.game.net.adapter.StateAdapter;
 import lombok.SneakyThrows;

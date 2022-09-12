@@ -2,10 +2,12 @@ package com.mygdx.game.actors.player;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Log
 public class PlayersRegistry {
     private static final PlayersRegistry instance = new PlayersRegistry();
     public static PlayersRegistry getInstance(){
@@ -18,6 +20,7 @@ public class PlayersRegistry {
     private PlayersRegistry(){}
 
     public void add(Player player){
+        log.info("Adding player: "+player);
         players.add(player);
     }
 

@@ -1,4 +1,4 @@
-package com.mygdx.game.messages.messages.dto;
+package com.mygdx.game.messages.messages;
 
 import com.mygdx.game.messages.core.Coordinates;
 import lombok.AllArgsConstructor;

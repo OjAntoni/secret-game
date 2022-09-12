@@ -1,6 +1,5 @@
 package com.mygdx.game.messages.messages;
 
-import com.mygdx.game.messages.messages.types.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
