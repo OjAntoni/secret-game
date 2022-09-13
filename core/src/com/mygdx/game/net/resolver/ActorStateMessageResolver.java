@@ -6,6 +6,7 @@ import com.mygdx.game.actors.ActorsRegistry;
 import com.mygdx.game.messages.messages.MessageType;
 import com.mygdx.game.net.adapter.JstarStateAdapter;
 import com.mygdx.game.net.adapter.StateAdapter;
+import com.mygdx.game.net.adapter.WilkStateAdapter;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import org.springframework.web.socket.WebSocketSession;
@@ -21,6 +22,8 @@ public class ActorStateMessageResolver implements MessageResolver {
     {
         JstarStateAdapter jstarStateAdapter = new JstarStateAdapter();
         idsToAdapters.put(jstarStateAdapter.getRelevantId(), jstarStateAdapter);
+        WilkStateAdapter wilkStateAdapter = new WilkStateAdapter();
+        idsToAdapters.put(wilkStateAdapter.getRelevantId(), wilkStateAdapter);
     }
 
     private final ObjectMapper objectMapper = new ObjectMapper();

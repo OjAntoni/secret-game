@@ -1,6 +1,7 @@
 package com.mygdx.game.actors;
 
 import com.mygdx.game.actors.jstar.Jstar;
+import com.mygdx.game.actors.wilk.Wilk;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ public class ActorsRegistry {
     static {
         Jstar jstar = new Jstar();
         allActors.put(jstar.getId(), jstar);
+        Wilk wilk = new Wilk();
+        allActors.put(wilk.getId(), wilk);
     }
 
     public AbstractActor getCurrent(String id){

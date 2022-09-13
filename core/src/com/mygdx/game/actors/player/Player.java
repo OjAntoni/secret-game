@@ -18,15 +18,15 @@ public class Player {
 
     public Player() {
         rectangle = new Rectangle();
-        rectangle.width = 30f;
-        rectangle.height = 30f;
+        rectangle.width = 60f;
+        rectangle.height = 60f;
         this.id = new Random().nextInt();
     }
 
     public Player(Coordinates coordinates, int id) {
         rectangle = new Rectangle();
-        rectangle.width = 30f;
-        rectangle.height = 30f;
+        rectangle.width = 60f;
+        rectangle.height = 60f;
         rectangle.x = coordinates.x;
         rectangle.y = coordinates.y;
         this.id = id;
@@ -42,7 +42,7 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch, Texture texture) {
-       batch.draw(texture, rectangle.x, rectangle.y, rectangle.width*2, rectangle.height*2);
+       batch.draw(texture, rectangle.x-rectangle.width/2f, rectangle.y-rectangle.height/2f, rectangle.width, rectangle.height);
     }
 
     public Rectangle getRectangleCopy(){
