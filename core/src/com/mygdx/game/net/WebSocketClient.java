@@ -30,17 +30,16 @@ public class WebSocketClient {
     }
 
     private WebSocketClient() {
-        StandardWebSocketClient client = new StandardWebSocketClient();
-        try {
-            if(session == null){
-                WebSocketHandler socket = new WebSocketEventHandler();
-                ListenableFuture<WebSocketSession> fut = client.doHandshake(socket, uri);
-                session = fut.get();
-                log.info("Session obtained by WebSocketClient.class: " + session);
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RuntimeException(t.getMessage());
+    }
+
+    @SneakyThrows
+    public void open(){
+        if(session == null){
+            StandardWebSocketClient client = new StandardWebSocketClient();
+            WebSocketHandler socket = new WebSocketEventHandler();
+            ListenableFuture<WebSocketSession> fut = client.doHandshake(socket, uri);
+            session = fut.get();
+            log.info("Session obtained by WebSocketClient.class: " + session);
         }
     }
 

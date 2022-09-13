@@ -29,16 +29,9 @@ public class GameService {
     private Player me;
     private String myName;
 
-    @SneakyThrows
+
     public GameService() {
-        Player me = new Player();
-        this.me = me;
-        log.info("Created me: " + me);
-        playersRegistry.setMe(me);
-        webSocketClient.getSession().sendMessage(new TextMessage(objectMapper.writeValueAsString(List.of(new SimpleMessage(MessageType.NEW_PLAYER,
-                objectMapper.writeValueAsString(new PlayerPositionDto(me.getCoordinates(), me.getId())))))));
-        myName = me.getId()+"";
-        studentInputHandler = new StudentInputHandler(me);
+
     }
 
     @SneakyThrows
@@ -76,7 +69,17 @@ public class GameService {
 
     @SneakyThrows
     public void startGame() {
+        log.info("Starting game");
         timer.start();
+        webSocketClient.open();
+        Player me = new Player();
+        this.me = me;
+        log.info("Created me: " + me);
+        playersRegistry.setMe(me);
+        webSocketClient.getSession().sendMessage(new TextMessage(objectMapper.writeValueAsString(List.of(new SimpleMessage(MessageType.NEW_PLAYER,
+                objectMapper.writeValueAsString(new PlayerPositionDto(me.getCoordinates(), me.getId())))))));
+        myName = me.getId()+"";
+        studentInputHandler = new PlayerInputHandler(me);
 
     }
 

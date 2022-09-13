@@ -1,8 +1,6 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -11,10 +9,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.game.ChatService;
+import com.mygdx.game.game.GameMenuProperties;
 import com.mygdx.game.game.GameService;
 import com.mygdx.game.game.PWGame;
 import com.mygdx.game.messages.messages.ChatMessage;
@@ -37,6 +34,7 @@ public class GameScreen implements Screen{
     Skin skin;
     TextArea textArea;
     ScrollPane scrollPane;
+    GameMenuProperties gameMenuProperties;
 
 
     @SneakyThrows
@@ -47,6 +45,7 @@ public class GameScreen implements Screen{
         this.game = game;
         this.gameService = new GameService();
         chatService = ChatService.getInstance();
+        gameMenuProperties = GameMenuProperties.getInstance();
     }
 
 
@@ -75,7 +74,9 @@ public class GameScreen implements Screen{
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        drawMenu();
+        if(gameMenuProperties.isTimeShown){
+            drawTimeMenu();
+        }
         gameService.drawPlayers(game.batch);
         gameService.drawActors(game.batch);
         game.batch.end();
@@ -86,13 +87,18 @@ public class GameScreen implements Screen{
             gameService.deleteMyPlayer();
         }
 
-        stage.act(Gdx.graphics.getDeltaTime());
-        updateChat();
-        stage.draw();
 
+        updateChat();
+        if(gameMenuProperties.isChatShown){
+            stage.act(Gdx.graphics.getDeltaTime());
+            stage.draw();
+        }
     }
 
     private void updateChat() {
+        if(!gameMenuProperties.isChatShown){
+            stage.unfocusAll();
+        }
         List<ChatMessage> messages = chatService.getMessages();
         messages.forEach(
                 m -> {
@@ -109,9 +115,9 @@ public class GameScreen implements Screen{
         messages.clear();
     }
 
-    private void drawMenu() {
+    private void drawTimeMenu() {
         game.font.setColor(Color.WHITE);
-        game.font.draw(game.batch, "Time survived: " + gameService.getTime() + "s", 0, Properties.SCREEN_HEIGHT);
+        game.font.draw(game.batch, "Time survived: " + gameService.getTime() + "s", 5, Properties.SCREEN_HEIGHT-5);
     }
 
     @Override
@@ -161,6 +167,7 @@ public class GameScreen implements Screen{
         scrollPane.addListener(new InputListener(){
             @Override
             public boolean mouseMoved(InputEvent event, float x, float y) {
+                if(!gameMenuProperties.isChatShown) return false;
                 if(x < scrollPane.getX()){
                     stage.unfocus(scrollPane);
                 } else {
@@ -184,6 +191,7 @@ public class GameScreen implements Screen{
         sendButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if(!gameMenuProperties.isChatShown) return;
                 stage.unfocus(textArea);
                 String text = textArea.getText();
                 textArea.setText("");

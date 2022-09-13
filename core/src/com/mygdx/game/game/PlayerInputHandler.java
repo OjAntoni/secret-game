@@ -2,22 +2,27 @@ package com.mygdx.game.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.actors.player.Player;
 import com.mygdx.game.messages.core.Coordinates;
 import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.Properties;
 import com.mygdx.game.util.TextureRegistry;
 
-public class StudentInputHandler implements InputHandler {
+public class PlayerInputHandler implements InputHandler {
     private final Player me;
     private final InGameTimer timer;
     private final TextureRegistry textureRegistry;
+    private final GameMenuProperties gameMenuProperties;
 
-    public StudentInputHandler(Player me) {
+    private boolean chatReload = true;
+    private boolean timeReload = true;
+
+    public PlayerInputHandler(Player me) {
         this.me= me;
         this.timer = InGameTimer.getInstance();
         this.textureRegistry = TextureRegistry.getInstance();
+        this.gameMenuProperties = GameMenuProperties.getInstance();
     }
 
     @Override
@@ -51,5 +56,27 @@ public class StudentInputHandler implements InputHandler {
         c.y = c.y + 30f > Properties.SCREEN_HEIGHT ? Properties.SCREEN_HEIGHT - 30f : c.y;
 
         me.setCoordinates(c);
+
+        if(Gdx.input.isKeyPressed(Input.Keys.F1) && chatReload){
+            gameMenuProperties.isChatShown = !gameMenuProperties.isChatShown;
+            chatReload = false;
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    chatReload = true;
+                }
+            }, 0.5f, 0, 1);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.F2) && timeReload){
+            gameMenuProperties.isTimeShown = !gameMenuProperties.isTimeShown;
+            timeReload = false;
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    timeReload = true;
+                }
+            }, 0.5f, 0, 1);
+        }
     }
 }
