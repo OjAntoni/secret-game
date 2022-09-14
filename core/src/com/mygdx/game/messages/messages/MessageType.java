@@ -6,5 +6,8 @@ public enum MessageType {
     DELETE_PLAYER,
     ACTOR_STATE,
     PLAYER_LOSS,
-    CHAT_MESSAGE
+    CHAT_MESSAGE,
+    NEW_CLEAN_CODE,
+    DELETE_CLEAN_CODE,
+    COORD_CLEAN_CODE
 }

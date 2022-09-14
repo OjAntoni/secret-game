@@ -23,6 +23,9 @@ public class MessageResolverRegistry {
         resolvers.put(MessageType.DELETE_PLAYER, new DeletePlayerMessageResolver());
         resolvers.put(MessageType.ACTOR_STATE, new ActorStateMessageResolver());
         resolvers.put(MessageType.CHAT_MESSAGE, new ChatMessageResolver());
+        resolvers.put(MessageType.COORD_CLEAN_CODE, new CoordCleanCodeMessageResolver());
+        resolvers.put(MessageType.NEW_CLEAN_CODE, new NewCleanCodeMessageResolver());
+        resolvers.put(MessageType.DELETE_CLEAN_CODE, new DeleteCleanCodeMessageResolver());
     }
 
     public void handle(WebSocketSession session, SimpleMessage simpleMessage){

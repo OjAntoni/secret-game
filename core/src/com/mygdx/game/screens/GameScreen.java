@@ -78,7 +78,9 @@ public class GameScreen implements Screen{
             drawTimeMenu();
         }
         gameService.drawPlayers(game.batch);
+        gameService.drawObjects(game.batch);
         gameService.drawActors(game.batch);
+
         game.batch.end();
 
         gameService.handleInput();
@@ -86,7 +88,6 @@ public class GameScreen implements Screen{
             gameService.sendLossMessage();
             gameService.deleteMyPlayer();
         }
-
 
         updateChat();
         if(gameMenuProperties.isChatShown){

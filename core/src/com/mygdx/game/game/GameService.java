@@ -10,6 +10,7 @@ import com.mygdx.game.messages.messages.SimpleMessage;
 import com.mygdx.game.messages.messages.PlayerPositionDto;
 import com.mygdx.game.messages.messages.MessageType;
 import com.mygdx.game.net.WebSocketClient;
+import com.mygdx.game.objects.ObjectRegistry;
 import com.mygdx.game.util.InGameTimer;
 import com.mygdx.game.util.TextureRegistry;
 import lombok.SneakyThrows;
@@ -25,6 +26,7 @@ public class GameService {
     private final WebSocketClient webSocketClient = WebSocketClient.getInstance();
     private final PlayersRegistry playersRegistry = PlayersRegistry.getInstance();
     private final ActorsRegistry actorsRegistry = ActorsRegistry.getInstance();
+    private final ObjectRegistry objectRegistry = ObjectRegistry.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private Player me;
     private String myName;
@@ -55,6 +57,10 @@ public class GameService {
 
     public void drawActors(SpriteBatch batch) {
         actorsRegistry.getCurrentActors().forEach((id, actor) -> actor.draw(batch));
+    }
+
+    public void drawObjects(SpriteBatch batch){
+        objectRegistry.getObjects().forEach(o -> o.draw(batch));
     }
 
     public void handleInput() {
