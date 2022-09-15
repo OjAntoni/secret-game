@@ -8,8 +8,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.game.PWGame;
 import com.mygdx.game.util.Properties;
+
 
 public class MainMenuScreen implements Screen {
     final PWGame game;
@@ -17,6 +23,9 @@ public class MainMenuScreen implements Screen {
     private Texture backgroundTexture;
     private Music mainMenuMusic;
     public Screen gameScreen;
+    private Stage stage;
+    private TextArea textArea;
+    private final Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
     public MainMenuScreen(final PWGame game) {
         this.game = game;
@@ -41,7 +50,6 @@ public class MainMenuScreen implements Screen {
     }
 
 
-
     @Override
     public void render(float delta) {
 
@@ -51,13 +59,22 @@ public class MainMenuScreen implements Screen {
         game.batch.begin();
         renderBackground();
         renderText();
+        renderNameInput();
         game.batch.end();
+
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+
 
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             gameScreen = new GameScreen(game);
             game.setScreen(gameScreen);
             dispose();
         }
+    }
+
+    private void renderNameInput() {
+
     }
 
     private void renderBackground() {
@@ -82,7 +99,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -102,6 +119,32 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
+        confidureInputNameTextField();
+    }
+
+    private void confidureInputNameTextField() {
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+        Table menu = new Table();
+        menu.setPosition(Properties.SCREEN_WIDTH*0.9f, Properties.SCREEN_HEIGHT*0.6f);
+        stage.addActor(menu);
+
+        textArea = new TextArea("", skin);
+        textArea.setPrefRows(1);
+        textArea.setMaxLength(15);
+        textArea.setAlignment(Align.center);
+        menu.add(textArea).row();
+
+        TextButton play = new TextButton("PLAY", skin);
+        play.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //todo
+            }
+        });
+
+        menu.add(play).fill().pad(5, 0, 0, 0).row();
+
 
     }
 }

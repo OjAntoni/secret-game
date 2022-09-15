@@ -46,6 +46,7 @@ public class GameScreen implements Screen{
         this.gameService = new GameService();
         chatService = ChatService.getInstance();
         gameMenuProperties = GameMenuProperties.getInstance();
+        skin = game.skin;
     }
 
 
@@ -156,7 +157,6 @@ public class GameScreen implements Screen{
     private void configureChatWindow() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
         table = new Table();
         table.setHeight(Properties.SCREEN_HEIGHT * 0.8f);

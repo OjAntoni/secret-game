@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActorsRegistry {
     private static final ActorsRegistry instance = new ActorsRegistry();
@@ -20,7 +21,7 @@ public class ActorsRegistry {
     private static final Map<String, AbstractActor> allActors = new HashMap<>();
     @Getter
     @Setter
-    private Map<String, AbstractActor> currentActors = new HashMap<>();
+    private Map<String, AbstractActor> currentActors = new ConcurrentHashMap<>();
 
     static {
         Jstar jstar = new Jstar();

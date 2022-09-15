@@ -7,31 +7,41 @@ public class InGameTimer {
     private static final InGameTimer instance = new InGameTimer();
     @Getter
     private int timeMillis;
-    private Timer.Task timer;
+    private int timeS;
+    private Timer.Task timerMs;
+    private Timer.Task timerS;
 
     public static InGameTimer getInstance(){
         return instance;
     }
 
     public void start(){
-        timer = Timer.schedule(new Timer.Task() {
+        timerMs = Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 timeMillis++;
             }
         }, 0.001f, 0.001f);
+        timerS = Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                timeS++;
+            }
+        }, 1f, 1f);
     }
 
     public int getTime(){
-        return timeMillis/1000;
+        return timeS;
     }
 
 
     public void stop(){
-        timer.cancel();
+        timerMs.cancel();
+        timerS.cancel();
     }
 
     public void clear(){
         timeMillis =0;
+        timeS = 0;
     }
 }
